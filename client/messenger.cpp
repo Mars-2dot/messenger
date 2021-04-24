@@ -4,16 +4,23 @@ Messenger::Messenger( QWidget* parent )
     : QMainWindow( parent )
 {
     setupUi( this );
-    this->login_button->setDisabled( false );
-    this->login_signup->setDisabled( true );
-    this->FindClientButton->setDisabled( true );
-    this->send->setDisabled( true );
     this->stackedWidget->setCurrentIndex( 1 );
     this->stackedWidget->setContextMenuPolicy( Qt::CustomContextMenu );
+
+    if ( QFile::exists( ( "settings.ini" ) ) ) {
+        QSettings settings( "settings.ini", QSettings::IniFormat );
+        settings.beginGroup( "WidgetPosition" );
+        int x = settings.value( "x", -1 ).toInt();
+        int y = settings.value( "y", -1 ).toInt();
+        int width = settings.value( "width", -1 ).toInt();
+        int height = settings.value( "height", -1 ).toInt();
+        settings.endGroup();
+        this->setGeometry( x, y, width, height );
+    }
+
     connect( this->stackedWidget, &QStackedWidget::customContextMenuRequested, this, &Messenger::slotContextMenu );
     connect( netController, &NetController::signalError, this, &Messenger::slotError );
     connect( netController, &NetController::signalLoginSuccessful, this, &Messenger::slotLoginSuccessful );
-    connect( netController, &NetController::signalFromUser, this, &Messenger::slotFromUser );
     connect( netController, &NetController::signalUnreadMessage, this, &Messenger::slotUnreadMessage );
     connect( netController, &NetController::signalCountUnreadMessage, this, &Messenger::slotCountUnreadMessage );
     connect( netController, &NetController::signalConnectSuccessful, this, &Messenger::slotConnected );
@@ -33,12 +40,15 @@ Messenger::Messenger( QWidget* parent )
 
 Messenger::~Messenger()
 {
-}
-
-
-void Messenger::onSendClicked()
-{
-
+    if ( saveSettings ) {
+        QSettings settings( "settings.ini", QSettings::IniFormat );
+        settings.beginGroup( "WidgetPosition" );
+        settings.setValue( "x", this->x() );
+        settings.setValue( "y", this->y() );
+        settings.setValue( "width", this->width() );
+        settings.setValue( "height", this->height() );
+        settings.endGroup();
+    }
 }
 
 void Messenger::slotError( int error )
@@ -103,11 +113,6 @@ void Messenger::slotUpdateContactList( const QString& contacts )
     }
 }
 
-void Messenger::slotFromUser( QString message )
-{
-
-}
-
 void Messenger::slotGetOnline( QString online )
 {
     QStringList usersName = online.split( "%" );
@@ -125,11 +130,6 @@ void Messenger::slotGetOnline( QString online )
 }
 
 void Messenger::slotUnreadMessage( QStringList messages )
-{
-
-}
-
-void Messenger::slotSuccessfulAddContact()
 {
 
 }
@@ -183,20 +183,15 @@ void Messenger::on_send_clicked()
 {
     const QString& message = this->listFriends->currentItem()->text() + "|" + this->input->text();
     this->chat->setText( this->chat->text() + "\n" + "You->" + this->listFriends->currentItem()->text() + ": " +
-                         this->input->text()  );
+                         this->input->text() );
+    this->input->clear();
+    this->send->setEnabled( true );
     emit signalSendMessage( &message );
 }
 
 void Messenger::on_input_textEdited( const QString& arg1 )
 {
-    if ( !arg1.isEmpty()  && this->listClients->currentIndex().isValid() ) {
-        this->send->setDisabled( false );
-    }
-}
-
-void Messenger::on_listClients_currentTextChanged( const QString& currentText )
-{
-    if ( !currentText.isEmpty() && !this->input->text().isEmpty() ) {
+    if ( !arg1.isEmpty()  && this->listFriends->currentIndex().isValid() ) {
         this->send->setDisabled( false );
     }
 }
@@ -226,18 +221,18 @@ void Messenger::on_listFriends_currentTextChanged( const QString& currentText )
 void Messenger::on_FindClientButton_clicked()
 {
     if ( !this->FindClient->text().isNull() ) {
+        QString foundUser;
         auto result = this->listClients->findItems( this->FindClient->text(), Qt::MatchContains );
 
         for ( int i = 0; i < result.size(); i++ ) {
-            QListWidgetItem* it = this->listClients->item( this->listClients->currentRow() );
-            delete it;
 
             if ( result[i]->text() == this->FindClient->text() ) {
-//                this->listClients->addItem( result[i]->text() );
-            } else {
+                foundUser = result[i]->text();
             }
         }
 
+        this->listClients->clear();
+        slotGetOnline( foundUser );
     } else {
         emit signalGetOnline();
     }
@@ -248,6 +243,15 @@ void Messenger::on_FindClient_textEdited( const QString& arg1 )
     if ( arg1.isEmpty() ) {
         emit signalGetOnline();
     } else {
-//        this->FindClientButton->setDisabled( false );
+        this->FindClientButton->setDisabled( false );
+    }
+}
+
+void Messenger::on_SaveSizeWindow_clicked( bool checked )
+{
+    if ( checked ) {
+        saveSettings = true;
+    } else {
+        saveSettings = false;
     }
 }

@@ -150,6 +150,10 @@ void Server::slotDeleteUserInOnline()
             break;
         }
     }
+
+    for ( int i = 0; i < UsersInOnline.length(); i++ ) {
+        slotSendOnline( UsersInOnline[i].Socket );
+    }
 }
 
 void Server::slotUpdateContactList( QTcpSocket* socket )
