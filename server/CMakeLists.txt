@@ -16,6 +16,7 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network Sql REQUIRED)
 
 find_package(spdlog PATHS ${CMAKE_BINARY_DIR}/dependencies/spdlog/lib/cmake/spdlog)
 
+#include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ExretnalProjectspdlog.cmake)
 if(spdlog_FOUND)
     message("***Logger found***")
 else()
