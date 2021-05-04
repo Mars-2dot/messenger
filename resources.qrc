@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Resources/chat.png</file>
+        <file>Resources/DarkMonokai.qss</file>
+        <file>Resources/search.png</file>
+        <file>Resources/send.png</file>
+        <file>Resources/send_disabled.png</file>
+    </qresource>
+</RCC>

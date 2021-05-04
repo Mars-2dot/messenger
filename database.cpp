@@ -14,23 +14,31 @@ DataBase::DataBase( )
         query.exec( sqlCommand[createNewTable] + sqlNameTable[contacts] + "(" + sqlVariable[idIntegerPrimaryKey] + "," +
                     sqlVariable[userText] + "," + sqlVariable[contactText] + "," +
                     sqlVariable[saveMessageText] + ")" );
+        query.exec( sqlCommand[createNewTable] + sqlNameTable[registationList] + "(" + sqlVariable[idIntegerPrimaryKey] + "," +
+                    sqlVariable[nameText] + "," + sqlVariable[passwordText] + "," + sqlVariable[ipVar] + "," +
+                    sqlVariable[PortVar] + "," + sqlVariable[StatusVar] + ")" );
         spdlog::info( "Database created" );
     } else {
         dataBase.setDatabaseName( path );
         dataBase.open();
         spdlog::info( "Database is exists" );
     }
+
 }
 
-bool DataBase::checkUser( QString nameUser )
+bool DataBase::checkUser( const QString& nameUser, const QString& passwordUser )
 {
-    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[users] + sqlCommand[where] + sqlNameAttributes[name] + " = '" +
-                nameUser + "'" );
+    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[registationList] + sqlCommand[where] + sqlNameAttributes[name] +
+                " = '" +
+                nameUser + "' " + sqlCommand[AND] + sqlNameAttributes[password] + " = '" + passwordUser + "'" );
     bool inDataBase = false;
+    record = query.record();
+    int portInx = record.indexOf( sqlNameAttributes[port] );
 
     if ( query.next() ) {
         inDataBase = true;
         spdlog::info( "User in database" );
+        emit signalSetPort( NULL, NULL, NULL, query.value( portInx ).toString().toInt() );
     }
 
     return inDataBase;
@@ -180,6 +188,37 @@ void DataBase::saveUserMessage( const QString* nameUser, const QString* message,
     }
 }
 
+bool DataBase::registrationUser( const QString& nameUser, const QString& passwordUser, const QString& ipUser,
+                                 const int portUser )
+{
+    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[registationList] + sqlCommand[where] + sqlNameAttributes[name] +
+                " = '" + nameUser + "'" );
+    record = query.record();
+    int nameIndex = record.indexOf( sqlNameAttributes[name] );
+    query.next();
+
+    if ( !query.value( nameIndex ).isNull()  ) {
+        return false;
+    } else {
+        query.prepare( sqlCommand[insertInto] + sqlNameTable[registationList] + "(" + sqlNameAttributes[name] + "," +
+                       sqlNameAttributes[password] + "," + sqlNameAttributes[ip] + "," + sqlNameAttributes[port] + ")" + sqlCommand[values] +
+                       "(" + ":" + sqlNameAttributes[name] + "," + ":" + sqlNameAttributes[password] + "," + ":" + sqlNameAttributes[ip] + ","
+                       + ":" + sqlNameAttributes[port] + ")" );
+        query.bindValue( ":" + sqlNameAttributes[name], nameUser );
+        query.bindValue( ":" + sqlNameAttributes[password], passwordUser );
+        query.bindValue( ":" + sqlNameAttributes[ip], ipUser );
+        query.bindValue( ":" + sqlNameAttributes[port], portUser );
+
+        if ( !query.exec() ) {
+            spdlog::error( "Error of registation user" );
+        } else {
+            spdlog::info( "User registation successful" );
+        }
+
+        return true;
+    }
+}
+
 QString DataBase::getUnreadMessage( QString nameUser, QString sender )
 {
     QString unreadMessages;
@@ -211,4 +250,38 @@ QString DataBase::getUnreadMessage( QString nameUser, QString sender )
     }
 
     return unreadMessages;
+}
+
+void DataBase::slotUpdateRegistationData( const QString& nameUser, const QString& passwordUser, const QString& ipUser,
+                                          const int portUser )
+{
+    registrationUser( nameUser, passwordUser, ipUser, portUser );
+}
+
+void DataBase::slotUpdateStatus( const QString& nameUser, const QString& status )
+{
+    query.prepare( sqlCommand[update] + sqlNameTable[registationList] + sqlCommand[set] + sqlNameAttributes[StatusAtr] +
+                   "=:" + sqlNameAttributes[StatusAtr]
+                   + sqlCommand[where] + sqlNameAttributes[name] + "=:" + sqlNameAttributes[name]
+                 );
+    query.bindValue( ":" + sqlNameAttributes[StatusAtr],
+                     status );
+    query.bindValue( ":" + sqlNameAttributes[name],
+                     nameUser );
+
+    if ( !query.exec() ) {
+        spdlog::error( "Error of sql query in update status" );
+        spdlog::error(  query.lastError().text().toLocal8Bit() );
+    }
+}
+
+void DataBase::slotGetPort( const QString& nameUser )
+{
+    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[registationList] + sqlCommand[where] + sqlNameAttributes[name]
+                + "= '" + nameUser + "'"
+              );
+    record = query.record();
+    int portInx = record.indexOf( sqlNameAttributes[port] );
+    query.next();
+    emit signalSetConnect( nameUser, "", "", query.value( portInx ).toString().toInt() );
 }
