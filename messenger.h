@@ -4,14 +4,17 @@
 #pragma once
 #include "./ui_messenger.h"
 #include "qtincludes.h"
-#include "netcontroller.h"
+
+#include "core.h"
 
 class messenger : public QMainWindow, private Ui::messenger
 {
     Q_OBJECT
 
 private:
-    NetController* netController = new NetController();
+    core* tox;
+    QThread* thread = new QThread;
+
 public:
     messenger( QWidget* parent = nullptr );
     ~messenger();

@@ -4,16 +4,9 @@ messenger::messenger( QWidget* parent )
     : QMainWindow( parent )
 {
     setupUi( this );
-    connect( this, &messenger::signalSetUserData, netController, &NetController::slotSetUserData );
-    connect( this, &messenger::signalCheckUser, netController, &NetController::slotCheckUser );
-    connect( this, &messenger::signalAddRegUser, netController, &NetController::slotAddRegUser );
-    connect( this, &messenger::signalGetPort, netController, &NetController::slotGetPort );
-    connect( this, &messenger::signalSend, netController, &NetController::slotSendMessage );
-    connect( netController, &NetController::signalOperationSuccessful, this, &messenger::slotOperationSuccessful );
-    connect( netController, &NetController::signalUpdateUserList, this, &messenger::slotUpdateUserList );
-    connect( netController, &NetController::signalError, this, &messenger::slotError );
-//    connect( netController, &NetController::signalConnectSuccessful, this, &messenger::slotError );
-    connect( netController, &NetController::signalNewMessage, this, &messenger::slotNewMessage );
+
+    connect( thread,  &QThread::started, tox, &core::start );
+    connect( thread, &QThread::finished, thread, &QThread::deleteLater );
 }
 
 messenger::~messenger()

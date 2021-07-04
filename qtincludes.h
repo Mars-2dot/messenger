@@ -24,7 +24,5 @@
     #include <QTextStream>
     #include <QSettings>
     #include <QResizeEvent>
-
-    #include <spdlog/spdlog.h>
 #endif
 #endif // QTINCLUDES_H
