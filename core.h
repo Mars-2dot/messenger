@@ -12,8 +12,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <cstdint>
 
 #include <sodium/utils.h>
+
+#include "convertstring.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,6 +27,10 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+class core;
+
+using corePtr = std::unique_ptr<core>;
 
 class core : public QObject
 {
@@ -43,10 +50,28 @@ private:
     QByteArray data;
 
 public:
+    struct toxData {
+        QString toxData;
+        QString Name;
+        QString Password;
+        QString publicKey;
+        QString privateKey;
+    };
+
+    toxData userData;
+    static corePtr makeCore( const QByteArray& savedata );
+
+public:
     core( bool signType, const QString& name, const QString& password );
+    core( );
     void start( );
+    void login( bool signType, const QString& name, const QString& password );
     void messageSend( QString& message );
     QStringList* getListFriends();
+    void test()
+    {
+        qDebug() << "Test";
+    }
 
 private:
     static void friend_request_cb( Tox* tox, const uint8_t* public_key, const uint8_t* message, size_t length,
@@ -56,7 +81,8 @@ private:
     static void self_connection_status_cb( Tox* tox, TOX_CONNECTION connection_status, void* user_data );
     static void tox_friend_connection_status_cb( Tox* tox, uint32_t friend_number, TOX_CONNECTION connection_status,
                                                  void* user_data );
-    uint8_t* QStringToUint8_t( QString& str );
+private:
+    QString CstringToQString( uint8_t* c_str, size_t size );
     void toxCallbacks();
     void toxBootstrap( unsigned char* key_bin = nullptr );
     void signUp( const QString& Name, const QString& Password );
@@ -65,10 +91,11 @@ private:
 
 signals:
     void signalToxData( const QString&, const QString&, const QString& );
-    void signalStatus( QString& );
+    void signalSetId( const QString& );
     void signalClientInfo( uint32_t, TOX_MESSAGE_TYPE, const uint8_t*, size_t );
     void signalSaveData( QByteArray& );
     void signalSetStatus( int );
+    void signalSendMessage( const uint32_t, const QString& );
 };
 
 #endif // CORE_H

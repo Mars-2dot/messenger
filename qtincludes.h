@@ -1,5 +1,6 @@
 #ifndef QTINCLUDES_H
 #define QTINCLUDES_H
+
 #if defined __cplusplus
     #include <QMainWindow>
     #include <QNetworkAccessManager>
@@ -24,5 +25,7 @@
     #include <QTextStream>
     #include <QSettings>
     #include <QResizeEvent>
+    #include <QThread>
+
 #endif
 #endif // QTINCLUDES_H

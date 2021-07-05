@@ -12,6 +12,7 @@
 #include <QtCore/QVariant>
 #include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QCommandLinkButton>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
@@ -84,9 +85,10 @@ public:
     QListWidget *listUser;
     QWidget *layoutWidget_3;
     QFormLayout *formLayout_2;
+    QLabel *chat;
     QLineEdit *input;
     QPushButton *send;
-    QLabel *chat;
+    QCommandLinkButton *copyToxId;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -94,7 +96,7 @@ public:
     {
         if (messenger->objectName().isEmpty())
             messenger->setObjectName(QString::fromUtf8("messenger"));
-        messenger->resize(868, 604);
+        messenger->resize(825, 620);
         messenger->setStyleSheet(QString::fromUtf8("background: rgb(25, 25, 25);\n"
 "color:black;"));
         messenger->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -631,26 +633,42 @@ public:
         formLayout_2 = new QFormLayout(layoutWidget_3);
         formLayout_2->setObjectName(QString::fromUtf8("formLayout_2"));
         formLayout_2->setContentsMargins(0, 0, 6, 6);
-        input = new QLineEdit(layoutWidget_3);
-        input->setObjectName(QString::fromUtf8("input"));
-        QSizePolicy sizePolicy3(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        chat = new QLabel(layoutWidget_3);
+        chat->setObjectName(QString::fromUtf8("chat"));
+        QSizePolicy sizePolicy3(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         sizePolicy3.setHorizontalStretch(0);
         sizePolicy3.setVerticalStretch(0);
-        sizePolicy3.setHeightForWidth(input->sizePolicy().hasHeightForWidth());
-        input->setSizePolicy(sizePolicy3);
+        sizePolicy3.setHeightForWidth(chat->sizePolicy().hasHeightForWidth());
+        chat->setSizePolicy(sizePolicy3);
+        chat->setMinimumSize(QSize(491, 471));
+        chat->setAutoFillBackground(false);
+        chat->setStyleSheet(QString::fromUtf8(" background:rgb(54, 57, 63);\n"
+"color:rgb(215, 213, 217)"));
+        chat->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+        chat->setWordWrap(true);
+
+        formLayout_2->setWidget(1, QFormLayout::SpanningRole, chat);
+
+        input = new QLineEdit(layoutWidget_3);
+        input->setObjectName(QString::fromUtf8("input"));
+        QSizePolicy sizePolicy4(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy4.setHorizontalStretch(0);
+        sizePolicy4.setVerticalStretch(0);
+        sizePolicy4.setHeightForWidth(input->sizePolicy().hasHeightForWidth());
+        input->setSizePolicy(sizePolicy4);
         input->setMinimumSize(QSize(530, 35));
         input->setStyleSheet(QString::fromUtf8(" background:rgb(54, 57, 63);\n"
 "color: rgb(215, 213, 217);\n"
 "border: rgb(215, 213, 217);"));
         input->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 
-        formLayout_2->setWidget(1, QFormLayout::LabelRole, input);
+        formLayout_2->setWidget(2, QFormLayout::LabelRole, input);
 
         send = new QPushButton(layoutWidget_3);
         send->setObjectName(QString::fromUtf8("send"));
         send->setEnabled(false);
-        sizePolicy3.setHeightForWidth(send->sizePolicy().hasHeightForWidth());
-        send->setSizePolicy(sizePolicy3);
+        sizePolicy4.setHeightForWidth(send->sizePolicy().hasHeightForWidth());
+        send->setSizePolicy(sizePolicy4);
         send->setMaximumSize(QSize(50, 35));
         send->setStyleSheet(QString::fromUtf8(" QPushButton:enabled\n"
 "{\n"
@@ -683,23 +701,13 @@ public:
 "        background: #8f8fb3;\n"
 "}"));
 
-        formLayout_2->setWidget(1, QFormLayout::FieldRole, send);
+        formLayout_2->setWidget(2, QFormLayout::FieldRole, send);
 
-        chat = new QLabel(layoutWidget_3);
-        chat->setObjectName(QString::fromUtf8("chat"));
-        QSizePolicy sizePolicy4(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        sizePolicy4.setHorizontalStretch(0);
-        sizePolicy4.setVerticalStretch(0);
-        sizePolicy4.setHeightForWidth(chat->sizePolicy().hasHeightForWidth());
-        chat->setSizePolicy(sizePolicy4);
-        chat->setMinimumSize(QSize(491, 471));
-        chat->setAutoFillBackground(false);
-        chat->setStyleSheet(QString::fromUtf8(" background:rgb(54, 57, 63);\n"
-"color:rgb(215, 213, 217)"));
-        chat->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
-        chat->setWordWrap(true);
+        copyToxId = new QCommandLinkButton(layoutWidget_3);
+        copyToxId->setObjectName(QString::fromUtf8("copyToxId"));
+        copyToxId->setStyleSheet(QString::fromUtf8("color: blue"));
 
-        formLayout_2->setWidget(0, QFormLayout::SpanningRole, chat);
+        formLayout_2->setWidget(0, QFormLayout::SpanningRole, copyToxId);
 
         splitter->addWidget(layoutWidget_3);
 
@@ -712,7 +720,7 @@ public:
         messenger->setCentralWidget(centralwidget);
         menubar = new QMenuBar(messenger);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 868, 20));
+        menubar->setGeometry(QRect(0, 0, 825, 20));
         messenger->setMenuBar(menubar);
         statusbar = new QStatusBar(messenger);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -720,7 +728,7 @@ public:
 
         retranslateUi(messenger);
 
-        stackedWidget->setCurrentIndex(0);
+        stackedWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(messenger);
@@ -747,6 +755,7 @@ public:
         add_button->setText(QString());
         contact_button->setText(QString());
         chat->setText(QString());
+        copyToxId->setText(QCoreApplication::translate("messenger", "Your tox ID(click to copy):", nullptr));
     } // retranslateUi
 
 };

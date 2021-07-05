@@ -7,6 +7,8 @@ messenger::messenger( QWidget* parent )
 
     connect( thread,  &QThread::started, tox, &core::start );
     connect( thread, &QThread::finished, thread, &QThread::deleteLater );
+    connect( tox, &core::signalSetId, this, &messenger::slotSetId, Qt::DirectConnection );
+    connect( tox, &core::signalSendMessage, this, &messenger::slotNewMessage, Qt::DirectConnection );
 }
 
 messenger::~messenger()
@@ -27,6 +29,11 @@ void messenger::slotOperationSuccessful( const int code )
         }
         break;
     }
+}
+
+void messenger::slotSetId( const QString& id )
+{
+    copyToxId->setText( copyToxId->text() + id );
 }
 
 void messenger::slotError( const int code )
@@ -60,14 +67,30 @@ void messenger::slotError( const int code )
     }
 }
 
+void messenger::slotSetStatus( const int code )
+{
+    switch ( code ) {
+        case 1: {
+        } break;
+
+        case 2: {
+
+        } break;
+
+        case 3: {
+
+        } break;
+    }
+}
+
 void messenger::slotConnectSuccessful( const QString&, const QString& )
 {
 
 }
 
-void messenger::slotNewMessage( const QString& sender, const QString& message )
+void messenger::slotNewMessage( const uint32_t friendId, const QString& message )
 {
-    chat->setText( chat->text() + "\n" + sender + "->" + message );
+    chat->setText( chat->text() + "\n" + friendId + "->" + message );
 }
 
 void messenger::on_login_signup_clicked()
@@ -79,9 +102,14 @@ void messenger::on_signup_button_clicked()
 {
     if ( signup_password->text() == signup_confirm->text() ) {
         QString name = signup_username->text(), password = signup_password->text();
-//        emit signalSetUserData( name, password );
-        stackedWidget->setCurrentIndex( 2 );
+
+        tox->login( true, name, password );
+        tox->moveToThread( thread );
+        thread->start();
+
         emit signalAddRegUser( signup_username->text(), signup_password->text(), "", 0 );
+
+        stackedWidget->setCurrentIndex( 2 );
     } else {
         slotError( 1 );
     }
@@ -113,3 +141,12 @@ void messenger::on_listUser_currentTextChanged( const QString& currentText )
 {
     emit signalGetPort( currentText );
 }
+
+void messenger::on_copyToxId_clicked()
+{
+    if ( QClipboard* c = QApplication::clipboard() ) {
+        c->disconnect( this );
+        c->setText( copyToxId->text().split( ":" )[1] );
+    }
+}
+

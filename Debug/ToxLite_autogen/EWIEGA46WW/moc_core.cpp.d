@@ -1,5 +1,6 @@
 /home/ilya/code/C++/messenger/Debug/ToxLite_autogen/EWIEGA46WW/moc_core.cpp: /home/ilya/code/C++/messenger/core.h \
   /home/ilya/code/C++/messenger/Debug/ToxLite_autogen/moc_predefs.h \
+  /home/ilya/code/C++/messenger/convertstring.h \
   /usr/include/asm-generic/errno-base.h \
   /usr/include/asm-generic/errno.h \
   /usr/include/asm/errno.h \

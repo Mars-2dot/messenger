@@ -10,7 +10,9 @@ void core::friend_request_cb( Tox* tox, const uint8_t* public_key, const uint8_t
 void core::friend_message_cb( Tox* tox, uint32_t friend_number, TOX_MESSAGE_TYPE type, const uint8_t* message,
                               size_t length, void* user_data )
 {
-    tox_friend_send_message( tox, friend_number, type, message, length, NULL );
+//    tox_friend_send_message( tox, friend_number, type, message, length, NULL );
+    QString msg = convertString( message, length ).getQString();
+    emit static_cast<core*>( user_data )->signalSendMessage( friend_number, msg );
 }
 
 void core::self_connection_status_cb( Tox* tox, TOX_CONNECTION connection_status, void* user_data )
@@ -36,10 +38,10 @@ void core::tox_friend_connection_status_cb( Tox* tox, uint32_t friend_number, TO
 
 }
 
-uint8_t* core::QStringToUint8_t( QString& str )
+QString core::CstringToQString( uint8_t* c_str, size_t size )
 {
-    uint8_t* result = std::copy( str.toUtf8().begin(), str.toUtf8().end(), result );
-    return result;
+    QByteArray bytes =  QByteArray( reinterpret_cast<const char*>( c_str ), size ) ;
+    return QString::fromUtf8( bytes );
 }
 
 void core::toxCallbacks()
@@ -63,11 +65,23 @@ void core::toxBootstrap( unsigned char* key_bin )
         {"tox.kurnevsky.net",                  33445, "82EF82BA33445A1F91A7DB27189ECFC0C013E06E3DA71F588ED692BED625EC23"}
     };
 
-    for ( size_t i = 0; i < sizeof( nodes ) / sizeof( DHT_node ); i ++ ) {
-        sodium_hex2bin( key_bin, sizeof( key_bin ), nodes[i].key_hex, sizeof( nodes[i].key_hex ) - 1,
-                        NULL, NULL, NULL );
-        tox_bootstrap( tox, nodes[i].ip, nodes[i].port, key_bin, NULL );
+    if ( key_bin == nullptr ) {
+        unsigned char key_bin[TOX_PUBLIC_KEY_SIZE];
+
+        for ( size_t i = 0; i < sizeof( nodes ) / sizeof( DHT_node ); i ++ ) {
+            sodium_hex2bin( key_bin, sizeof( key_bin ), nodes[i].key_hex, sizeof( nodes[i].key_hex ) - 1,
+                            NULL, NULL, NULL );
+            tox_bootstrap( tox, nodes[i].ip, nodes[i].port, key_bin, NULL );
+        }
+    } else {
+        for ( size_t i = 0; i < sizeof( nodes ) / sizeof( DHT_node ); i ++ ) {
+            sodium_hex2bin( key_bin, sizeof( key_bin ), nodes[i].key_hex, sizeof( nodes[i].key_hex ) - 1,
+                            NULL, NULL, NULL );
+            tox_bootstrap( tox, nodes[i].ip, nodes[i].port, key_bin, NULL );
+        }
     }
+
+    delete key_bin;
 }
 
 void core::signUp( const QString& Name, const QString& Password )
@@ -90,6 +104,7 @@ void core::signUp( const QString& Name, const QString& Password )
     toxSave.open( QIODevice::WriteOnly );
     toxSave.write( data );
     toxSave.close();
+    saveData();
 }
 
 void core::signIn( const QString& name, const QString& password )
@@ -149,6 +164,10 @@ void core::saveData()
         tox_private_hex[i] = toupper( tox_private_hex[i] );
     }
 
+    const QString id = ( char* )tox_id_hex;
+
+    emit signalSetId( id );
+
     toxSave.setFileName( "keyPublic" );
 
     if ( !toxSave.exists() ) {
@@ -165,6 +184,12 @@ core::core( bool signType, const QString& name, const QString& password )
     } else {
         signIn( name, password );
     }
+
+}
+
+core::core()
+{
+
 }
 
 void core::start()
@@ -177,6 +202,15 @@ void core::start()
     }
 
     tox_kill( tox );
+}
+
+void core::login( bool signType, const QString& name, const QString& password )
+{
+    if ( signType ) {
+        signUp( name, password );
+    } else {
+        signIn( name, password );
+    }
 }
 
 void core::messageSend( QString& message )

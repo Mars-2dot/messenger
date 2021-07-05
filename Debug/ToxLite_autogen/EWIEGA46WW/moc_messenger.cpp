@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_messenger_t {
-    QByteArrayData data[29];
-    char stringdata0[409];
+    QByteArrayData data[34];
+    char stringdata0[468];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -48,19 +48,24 @@ QT_MOC_LITERAL(12, 137, 2), // "ip"
 QT_MOC_LITERAL(13, 140, 4), // "port"
 QT_MOC_LITERAL(14, 145, 23), // "slotOperationSuccessful"
 QT_MOC_LITERAL(15, 169, 4), // "code"
-QT_MOC_LITERAL(16, 174, 9), // "slotError"
-QT_MOC_LITERAL(17, 184, 21), // "slotConnectSuccessful"
-QT_MOC_LITERAL(18, 206, 14), // "slotNewMessage"
-QT_MOC_LITERAL(19, 221, 6), // "sender"
-QT_MOC_LITERAL(20, 228, 23), // "on_login_signup_clicked"
-QT_MOC_LITERAL(21, 252, 24), // "on_signup_button_clicked"
-QT_MOC_LITERAL(22, 277, 23), // "on_login_button_clicked"
-QT_MOC_LITERAL(23, 301, 23), // "on_signup_login_clicked"
-QT_MOC_LITERAL(24, 325, 19), // "on_input_textEdited"
-QT_MOC_LITERAL(25, 345, 4), // "arg1"
-QT_MOC_LITERAL(26, 350, 15), // "on_send_clicked"
-QT_MOC_LITERAL(27, 366, 30), // "on_listUser_currentTextChanged"
-QT_MOC_LITERAL(28, 397, 11) // "currentText"
+QT_MOC_LITERAL(16, 174, 9), // "slotSetId"
+QT_MOC_LITERAL(17, 184, 2), // "id"
+QT_MOC_LITERAL(18, 187, 9), // "slotError"
+QT_MOC_LITERAL(19, 197, 13), // "slotSetStatus"
+QT_MOC_LITERAL(20, 211, 21), // "slotConnectSuccessful"
+QT_MOC_LITERAL(21, 233, 14), // "slotNewMessage"
+QT_MOC_LITERAL(22, 248, 8), // "uint32_t"
+QT_MOC_LITERAL(23, 257, 8), // "friendId"
+QT_MOC_LITERAL(24, 266, 23), // "on_login_signup_clicked"
+QT_MOC_LITERAL(25, 290, 24), // "on_signup_button_clicked"
+QT_MOC_LITERAL(26, 315, 23), // "on_login_button_clicked"
+QT_MOC_LITERAL(27, 339, 23), // "on_signup_login_clicked"
+QT_MOC_LITERAL(28, 363, 19), // "on_input_textEdited"
+QT_MOC_LITERAL(29, 383, 4), // "arg1"
+QT_MOC_LITERAL(30, 388, 15), // "on_send_clicked"
+QT_MOC_LITERAL(31, 404, 30), // "on_listUser_currentTextChanged"
+QT_MOC_LITERAL(32, 435, 11), // "currentText"
+QT_MOC_LITERAL(33, 447, 20) // "on_copyToxId_clicked"
 
     },
     "messenger\0signalSetUserData\0\0"
@@ -68,13 +73,14 @@ QT_MOC_LITERAL(28, 397, 11) // "currentText"
     "signalSend\0message\0signalGetPort\0"
     "nameUser\0slotUpdateUserList\0name\0"
     "password\0ip\0port\0slotOperationSuccessful\0"
-    "code\0slotError\0slotConnectSuccessful\0"
-    "slotNewMessage\0sender\0on_login_signup_clicked\0"
+    "code\0slotSetId\0id\0slotError\0slotSetStatus\0"
+    "slotConnectSuccessful\0slotNewMessage\0"
+    "uint32_t\0friendId\0on_login_signup_clicked\0"
     "on_signup_button_clicked\0"
     "on_login_button_clicked\0on_signup_login_clicked\0"
     "on_input_textEdited\0arg1\0on_send_clicked\0"
     "on_listUser_currentTextChanged\0"
-    "currentText"
+    "currentText\0on_copyToxId_clicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -84,7 +90,7 @@ static const uint qt_meta_data_messenger[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      17,   14, // methods
+      20,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -92,25 +98,28 @@ static const uint qt_meta_data_messenger[] = {
        5,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    2,   99,    2, 0x06 /* Public */,
-       3,    2,  104,    2, 0x06 /* Public */,
-       4,    4,  109,    2, 0x06 /* Public */,
-       5,    1,  118,    2, 0x06 /* Public */,
-       7,    1,  121,    2, 0x06 /* Public */,
+       1,    2,  114,    2, 0x06 /* Public */,
+       3,    2,  119,    2, 0x06 /* Public */,
+       4,    4,  124,    2, 0x06 /* Public */,
+       5,    1,  133,    2, 0x06 /* Public */,
+       7,    1,  136,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       9,    4,  124,    2, 0x0a /* Public */,
-      14,    1,  133,    2, 0x08 /* Private */,
-      16,    1,  136,    2, 0x08 /* Private */,
-      17,    2,  139,    2, 0x08 /* Private */,
-      18,    2,  144,    2, 0x08 /* Private */,
-      20,    0,  149,    2, 0x08 /* Private */,
-      21,    0,  150,    2, 0x08 /* Private */,
-      22,    0,  151,    2, 0x08 /* Private */,
-      23,    0,  152,    2, 0x08 /* Private */,
-      24,    1,  153,    2, 0x08 /* Private */,
-      26,    0,  156,    2, 0x08 /* Private */,
-      27,    1,  157,    2, 0x08 /* Private */,
+       9,    4,  139,    2, 0x0a /* Public */,
+      14,    1,  148,    2, 0x08 /* Private */,
+      16,    1,  151,    2, 0x08 /* Private */,
+      18,    1,  154,    2, 0x08 /* Private */,
+      19,    1,  157,    2, 0x08 /* Private */,
+      20,    2,  160,    2, 0x08 /* Private */,
+      21,    2,  165,    2, 0x08 /* Private */,
+      24,    0,  170,    2, 0x08 /* Private */,
+      25,    0,  171,    2, 0x08 /* Private */,
+      26,    0,  172,    2, 0x08 /* Private */,
+      27,    0,  173,    2, 0x08 /* Private */,
+      28,    1,  174,    2, 0x08 /* Private */,
+      30,    0,  177,    2, 0x08 /* Private */,
+      31,    1,  178,    2, 0x08 /* Private */,
+      33,    0,  181,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::QString,    2,    2,
@@ -122,16 +131,19 @@ static const uint qt_meta_data_messenger[] = {
  // slots: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::QString, QMetaType::Int,   10,   11,   12,   13,
     QMetaType::Void, QMetaType::Int,   15,
+    QMetaType::Void, QMetaType::QString,   17,
+    QMetaType::Void, QMetaType::Int,   15,
     QMetaType::Void, QMetaType::Int,   15,
     QMetaType::Void, QMetaType::QString, QMetaType::QString,    2,    2,
-    QMetaType::Void, QMetaType::QString, QMetaType::QString,   19,    6,
+    QMetaType::Void, 0x80000000 | 22, QMetaType::QString,   23,    6,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   25,
+    QMetaType::Void, QMetaType::QString,   29,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   28,
+    QMetaType::Void, QMetaType::QString,   32,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -149,16 +161,19 @@ void messenger::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 4: _t->signalGetPort((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 5: _t->slotUpdateUserList((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2])),(*reinterpret_cast< const QString(*)>(_a[3])),(*reinterpret_cast< const int(*)>(_a[4]))); break;
         case 6: _t->slotOperationSuccessful((*reinterpret_cast< const int(*)>(_a[1]))); break;
-        case 7: _t->slotError((*reinterpret_cast< const int(*)>(_a[1]))); break;
-        case 8: _t->slotConnectSuccessful((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
-        case 9: _t->slotNewMessage((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
-        case 10: _t->on_login_signup_clicked(); break;
-        case 11: _t->on_signup_button_clicked(); break;
-        case 12: _t->on_login_button_clicked(); break;
-        case 13: _t->on_signup_login_clicked(); break;
-        case 14: _t->on_input_textEdited((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 15: _t->on_send_clicked(); break;
-        case 16: _t->on_listUser_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 7: _t->slotSetId((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 8: _t->slotError((*reinterpret_cast< const int(*)>(_a[1]))); break;
+        case 9: _t->slotSetStatus((*reinterpret_cast< const int(*)>(_a[1]))); break;
+        case 10: _t->slotConnectSuccessful((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
+        case 11: _t->slotNewMessage((*reinterpret_cast< const uint32_t(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
+        case 12: _t->on_login_signup_clicked(); break;
+        case 13: _t->on_signup_button_clicked(); break;
+        case 14: _t->on_login_button_clicked(); break;
+        case 15: _t->on_signup_login_clicked(); break;
+        case 16: _t->on_input_textEdited((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 17: _t->on_send_clicked(); break;
+        case 18: _t->on_listUser_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 19: _t->on_copyToxId_clicked(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -230,13 +245,13 @@ int messenger::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 17)
+        if (_id < 20)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 17;
+        _id -= 20;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 17)
+        if (_id < 20)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 17;
+        _id -= 20;
     }
     return _id;
 }

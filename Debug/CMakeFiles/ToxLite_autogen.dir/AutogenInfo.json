@@ -100,14 +100,26 @@
 		"/home/ilya/code/C++/messenger/resources.qrc"
 	],
 	"CMAKE_SOURCE_DIR" : "/home/ilya/code/C++/messenger",
-	"DEP_FILE" : "",
-	"DEP_FILE_RULE_NAME" : "",
+	"DEP_FILE" : "/home/ilya/code/C++/messenger/Debug/ToxLite_autogen/deps",
+	"DEP_FILE_RULE_NAME" : "ToxLite_autogen/timestamp",
 	"HEADERS" : 
 	[
+		[
+			"/home/ilya/code/C++/messenger/convertstring.h",
+			"MU",
+			"EWIEGA46WW/moc_convertstring.cpp",
+			null
+		],
 		[
 			"/home/ilya/code/C++/messenger/core.h",
 			"MU",
 			"EWIEGA46WW/moc_core.cpp",
+			null
+		],
+		[
+			"/home/ilya/code/C++/messenger/database.h",
+			"MU",
+			"EWIEGA46WW/moc_database.cpp",
 			null
 		],
 		[
@@ -184,7 +196,9 @@
 	"SETTINGS_FILE" : "/home/ilya/code/C++/messenger/Debug/CMakeFiles/ToxLite_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[ "/home/ilya/code/C++/messenger/convertstring.cpp", "MU", null ],
 		[ "/home/ilya/code/C++/messenger/core.cpp", "MU", null ],
+		[ "/home/ilya/code/C++/messenger/database.cpp", "MU", null ],
 		[ "/home/ilya/code/C++/messenger/main.cpp", "MU", null ],
 		[ "/home/ilya/code/C++/messenger/messenger.cpp", "MU", null ]
 	],

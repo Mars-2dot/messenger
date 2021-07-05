@@ -1,5 +1,6 @@
 /home/ilya/code/C++/messenger/Debug/ToxLite_autogen/EWIEGA46WW/moc_messenger.cpp: /home/ilya/code/C++/messenger/messenger.h \
   /home/ilya/code/C++/messenger/Debug/ToxLite_autogen/moc_predefs.h \
+  /home/ilya/code/C++/messenger/convertstring.h \
   /home/ilya/code/C++/messenger/core.h \
   /home/ilya/code/C++/messenger/qtincludes.h \
   /usr/include/GL/gl.h \

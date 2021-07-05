@@ -17,12 +17,16 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network Sql REQUIRED)
 set(SOURCE_FILES
         main.cpp
         core.cpp
+        convertstring.cpp
+        database.cpp
         messenger.cpp
     )
 
 set(HEADER_FILES
         messenger.h
         core.h
+        convertstring.h
+        database.h
         qtincludes.h
     )
 
@@ -60,6 +64,7 @@ target_link_libraries(ToxLite PRIVATE
     Qt${QT_VERSION_MAJOR}::Sql
     sodium
     toxcore
+    spdlog
     /usr/local/lib/
     )
 
