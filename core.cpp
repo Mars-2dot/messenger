@@ -1,58 +1,74 @@
 #include "core.h"
-#include <iostream>
 
-void core::friend_request_cb( Tox* tox, const uint8_t* public_key, const uint8_t* message, size_t length,
-                              void* user_data )
+void core::friendRequestCb( Tox* tox, const uint8_t* public_key, const uint8_t* message, size_t length,
+                            void* Core )
 {
-    tox_friend_add_norequest( tox, public_key, NULL );
-}
-
-void core::friend_message_cb( Tox* tox, uint32_t friend_number, TOX_MESSAGE_TYPE type, const uint8_t* message,
-                              size_t length, void* user_data )
-{
-//    tox_friend_send_message( tox, friend_number, type, message, length, NULL );
     QString msg = convertString( message, length ).getQString();
-    emit static_cast<core*>( user_data )->signalSendMessage( friend_number, msg );
+    QString publicKey = convertString( public_key, TOX_PUBLIC_KEY_SIZE ).getBytes().toHex();
+
+    emit static_cast<core*>( Core )->signalFriendRequest( msg );
+    emit static_cast<core*>( Core )->signalDataBaseAddRequst( msg.split( " " )[0], publicKey, msg );
+    emit static_cast<core*>( Core )->signalUpdateUserData();
 }
 
-void core::self_connection_status_cb( Tox* tox, TOX_CONNECTION connection_status, void* user_data )
+void core::friendMessageCb( Tox* tox, uint32_t friend_number, TOX_MESSAGE_TYPE type, const uint8_t* message,
+                            size_t length, void* Core )
+{
+    QString msg = convertString( message, length ).getQString();
+    emit static_cast<core*>( Core )->signalSendMessage( toxGetFriendName( tox, friend_number, Core, NULL ), msg,
+                                                        friend_number );
+}
+
+void core::selfConnectionStatusCb( Tox* tox, TOX_CONNECTION connection_status, void* Core )
 {
     switch ( connection_status ) {
         case TOX_CONNECTION_NONE:
-            qDebug() << "Offline\n";
+            emit static_cast<core*>( Core )->signalSetStatus( 1 );
             break;
 
         case TOX_CONNECTION_TCP:
-            qDebug() << "Online, using TCP\n";
+            emit static_cast<core*>( Core )->signalSetStatus( 3 );
+            static_cast<core*>( Core )->slotGetListFriends( Core );
             break;
 
         case TOX_CONNECTION_UDP:
-            qDebug() << "Online, using UDP\n";
+            emit static_cast<core*>( Core )->signalSetStatus( 2 );
+            static_cast<core*>( Core )->slotGetListFriends( Core );
             break;
     }
 }
 
-void core::tox_friend_connection_status_cb( Tox* tox, uint32_t friend_number, TOX_CONNECTION connection_status,
-                                            void* user_data )
+void core::toxFriendConnectionStatusCb( Tox* tox, uint32_t friend_number, TOX_CONNECTION connection_status,
+                                        void* Core )
 {
 
 }
 
-QString core::CstringToQString( uint8_t* c_str, size_t size )
+void core::toxLogCb( Tox* tox, TOX_LOG_LEVEL level, const char* file, uint32_t line, const char* func,
+                     const char* message, void* Core )
 {
-    QByteArray bytes =  QByteArray( reinterpret_cast<const char*>( c_str ), size ) ;
-    return QString::fromUtf8( bytes );
+}
+
+const QString core::toxGetFriendName( Tox* tox, uint32_t friendNumber, void* core, TOX_ERR_FRIEND_QUERY* error )
+{
+    uint8_t* name;
+    size_t size;
+    size = tox_friend_get_name_size( tox, friendNumber, NULL );
+    tox_friend_get_name( tox, friendNumber, name, NULL );
+    QString qName;
+    qName = convertString( name, size ).getQString();
+    return qName;
 }
 
 void core::toxCallbacks()
 {
-    tox_callback_friend_request( tox, friend_request_cb );
-    tox_callback_friend_message( tox, friend_message_cb );
-    tox_callback_self_connection_status( tox, self_connection_status_cb );
-    tox_callback_friend_connection_status( tox, tox_friend_connection_status_cb );
+    tox_callback_friend_request( tox, friendRequestCb );
+    tox_callback_friend_message( tox, friendMessageCb );
+    tox_callback_self_connection_status( tox, selfConnectionStatusCb );
+    tox_callback_friend_connection_status( tox, toxFriendConnectionStatusCb );
 }
 
-void core::toxBootstrap( unsigned char* key_bin )
+void core::toxBootstrap( uint8_t* keyBin )
 {
     DHT_node nodes[] = {
         {"85.143.221.42",                      33445, "DA4E4ED4B697F2E9B000EEFE3A34B554ACD3F45F5C96EAEA2516DD7FF9AF7B43"},
@@ -65,7 +81,7 @@ void core::toxBootstrap( unsigned char* key_bin )
         {"tox.kurnevsky.net",                  33445, "82EF82BA33445A1F91A7DB27189ECFC0C013E06E3DA71F588ED692BED625EC23"}
     };
 
-    if ( key_bin == nullptr ) {
+    if ( keyBin == nullptr ) {
         unsigned char key_bin[TOX_PUBLIC_KEY_SIZE];
 
         for ( size_t i = 0; i < sizeof( nodes ) / sizeof( DHT_node ); i ++ ) {
@@ -75,18 +91,17 @@ void core::toxBootstrap( unsigned char* key_bin )
         }
     } else {
         for ( size_t i = 0; i < sizeof( nodes ) / sizeof( DHT_node ); i ++ ) {
-            sodium_hex2bin( key_bin, sizeof( key_bin ), nodes[i].key_hex, sizeof( nodes[i].key_hex ) - 1,
-                            NULL, NULL, NULL );
-            tox_bootstrap( tox, nodes[i].ip, nodes[i].port, key_bin, NULL );
+            tox_bootstrap( tox, nodes[i].ip, nodes[i].port, keyBin, NULL );
         }
     }
 
-    delete key_bin;
 }
 
 void core::signUp( const QString& Name, const QString& Password )
 {
-    tox = tox_new( NULL, NULL );
+    tox_options_default( options );
+    tox_options_set_log_user_data( options, this );
+    tox = tox_new( options, NULL );
     QByteArray temp = Name.toLocal8Bit();
     static const char* name = temp.data();
     tox_self_set_name( tox,  ( const uint8_t* ) name, strlen( name ), NULL );
@@ -95,86 +110,67 @@ void core::signUp( const QString& Name, const QString& Password )
 
     toxBootstrap();
 
-    uint32_t fileSize = tox_get_savedata_size( tox );
-    data.resize( fileSize );
-
-    tox_get_savedata( tox, ( uint8_t* )data.data() );
-
-    toxSave.setFileName( "tox.save" );
-    toxSave.open( QIODevice::WriteOnly );
-    toxSave.write( data );
-    toxSave.close();
-    saveData();
+    saveData( Name, Password );
 }
 
 void core::signIn( const QString& name, const QString& password )
 {
-    toxSave.setFileName( "tox.save" );
-    toxSave.open( QIODevice::ReadOnly );
-    data = toxSave.readAll();
-    toxSave.close();
-    size_t sizeData = data.size();
+    uint8_t* data = ( uint8_t* )convertString( db->getUserData( name ) ).getDataFromQString();
+    QString id = db->getToxID( name );
+    size_t sizeData = convertString( db->getUserData( name ) ).getBytes().size() / 2;
+
+    emit signalSetId( id );
 
     tox_options_set_savedata_type( options, TOX_SAVEDATA_TYPE_TOX_SAVE );
-    tox_options_set_savedata_data( options, ( uint8_t* )data.data(), sizeData );
-
-    toxSave.setFileName( "keyPublic" );
-
-    if ( !toxSave.exists() ) {
-        toxSave.open( QIODevice::ReadOnly );
-        data.clear();
-        data = toxSave.readAll();
-        toxSave.close();
-    }
-
-    unsigned char* key_bin;
-    key_bin = ( unsigned char* )data.data();
+    tox_options_set_savedata_data( options, ( uint8_t* )data, sizeData );
 
     tox = tox_new( options, NULL );
-    toxBootstrap( key_bin );
+    tox_options_set_log_user_data( options, this );
+    tox_options_set_savedata_type( options, TOX_SAVEDATA_TYPE_TOX_SAVE );
+    tox_options_set_log_callback( options, toxLogCb );
+    tox_get_savedata( tox, data );
+    slotSetStatus( TOX_USER_STATUS_NONE );
+
+    uint8_t* keyBin = ( uint8_t* )convertString( db->getUserPublicKey( name ) ).getDataFromQString();
+    toxBootstrap( keyBin );
 }
 
-void core::saveData()
+void core::saveData( const QString& Name, const QString& Password )
+{
+    uint8_t toxIdBin[TOX_ADDRESS_SIZE];
+    uint8_t toxPublicKey[TOX_PUBLIC_KEY_SIZE];
+    uint8_t toxPrivetKey[TOX_SECRET_KEY_SIZE];
+    uint32_t dataSize = tox_get_savedata_size( tox );
+    data.resize( dataSize  );
+
+    tox_self_get_address( tox, toxIdBin );
+    tox_self_get_public_key( tox, toxPublicKey );
+    tox_self_get_secret_key( tox, toxPrivetKey );
+    tox_get_savedata( tox, ( uint8_t* )data.data() );
+
+    QString id = convertString( toxIdBin, TOX_ADDRESS_SIZE ).getBytes().toHex().toUpper();
+    QString publicKey = convertString( toxPublicKey, TOX_PUBLIC_KEY_SIZE ).getBytes().toHex().toUpper();
+    QString privetKey = convertString( toxPrivetKey, TOX_SECRET_KEY_SIZE ).getBytes().toHex().toUpper();
+    QString userData = convertString( data ).getBytes().toHex();
+
+    emit signalSetId( id );
+
+    db->addUser( Name, Password, userData, publicKey, privetKey, id );
+}
+
+const QString& core::getToxId( Tox* tox )
 {
     uint8_t tox_id_bin[TOX_ADDRESS_SIZE];
-    uint8_t tox_public_key[TOX_PUBLIC_KEY_SIZE];
-    uint8_t tox_private_key[TOX_SECRET_KEY_SIZE];
-
     tox_self_get_address( tox, tox_id_bin );
-    tox_self_get_public_key( tox, tox_public_key );
-    tox_self_get_secret_key( tox, tox_private_key );
-
     char tox_id_hex[TOX_ADDRESS_SIZE * 2 + 1];
-    char tox_public_hex[TOX_PUBLIC_KEY_SIZE * 2 + 1];
-    char tox_private_hex[TOX_SECRET_KEY_SIZE * 2 + 1];
-
     sodium_bin2hex( tox_id_hex, sizeof( tox_id_hex ), tox_id_bin, sizeof( tox_id_bin ) );
-    sodium_bin2hex( tox_public_hex, sizeof( tox_public_hex ), tox_public_key, sizeof( tox_public_key ) );
-    sodium_bin2hex( tox_private_hex, sizeof( tox_private_hex ), tox_private_key, sizeof( tox_private_key ) );
 
     for ( size_t i = 0; i < sizeof( tox_id_hex ) - 1; i ++ ) {
         tox_id_hex[i] = toupper( tox_id_hex[i] );
     }
 
-    for ( size_t i = 0; i < sizeof( tox_public_hex ) - 1; i ++ ) {
-        tox_public_hex[i] = toupper( tox_public_hex[i] );
-    }
-
-    for ( size_t i = 0; i < sizeof( tox_private_hex ) - 1; i ++ ) {
-        tox_private_hex[i] = toupper( tox_private_hex[i] );
-    }
-
-    const QString id = ( char* )tox_id_hex;
-
-    emit signalSetId( id );
-
-    toxSave.setFileName( "keyPublic" );
-
-    if ( !toxSave.exists() ) {
-        toxSave.open( QIODevice::WriteOnly );
-        toxSave.write( tox_public_hex );
-        toxSave.close();
-    }
+    toxUser.id = ( char* )tox_id_hex;
+    return toxUser.id;
 }
 
 core::core( bool signType, const QString& name, const QString& password )
@@ -184,12 +180,19 @@ core::core( bool signType, const QString& name, const QString& password )
     } else {
         signIn( name, password );
     }
-
 }
 
 core::core()
 {
+    connect( this, &core::signalDataBaseAddRequst, db, &DataBase::slotAddRequest );
+    connect( this, &core::signalAddFriend, db, &DataBase::slotAddFriend );
+    connect( this, &core::signalSaveUserData, db, &DataBase::slotSaveData );
+    connect( this, &core::signalUpdateUserData, this, &core::slotUpdateUserData );
+}
 
+core::~core()
+{
+    tox_kill( tox );
 }
 
 void core::start()
@@ -197,36 +200,90 @@ void core::start()
     toxCallbacks();
 
     while ( 1 ) {
-        tox_iterate( tox, NULL );
+        tox_iterate( tox, this );
         usleep( tox_iteration_interval( tox ) * 1000 );
     }
 
     tox_kill( tox );
 }
 
-void core::login( bool signType, const QString& name, const QString& password )
+void core::login( const QString& name, const QString& password, const bool loginType )
 {
-    if ( signType ) {
-        signUp( name, password );
-    } else {
+    if ( loginType ) {
         signIn( name, password );
+    } else {
+        signUp( name, password );
     }
 }
 
-void core::messageSend( QString& message )
+void core::slotAcceptFriendRequest( const QString& message )
+{
+    uint8_t* key = ( uint8_t* )convertString( db->getPublicKey( message ) ).getDataFromQString();
+    tox_friend_add_norequest( tox, key, NULL );
+
+    emit signalAddFriend( toxUser.Name, message, db->getPublicKey( message ) );
+}
+
+void core::slotSendMessage( const QString& message, uint32_t number )
+{
+    tox_friend_send_message( tox, number, TOX_MESSAGE_TYPE_NORMAL, ( uint8_t* )message.toLocal8Bit().toUInt(),
+                             message.size(), NULL );
+}
+
+void core::slotAddFriend( const QString& Name )
 {
 
 }
 
-QStringList* core::getListFriends()
+void core::slotCheckUser( const QString& name, const QString& password, const bool loginType )
 {
-    uint32_t* friendsList = new uint32_t( tox_self_get_friend_list_size( tox ) );
+    if ( loginType ) {
+        if ( db->checkUser( name, password, loginType ) ) {
+            emit signalCheckSuccessful( name, password, loginType );
+        } else {
+            emit signalError( 2 );
+        }
+    } else {
+        if ( db->checkRegUser( name, password, loginType ) ) {
+            emit signalCheckSuccessful( name, password, loginType );
+        } else {
+            emit signalError( 0 );
+        }
+    }
+}
+
+void core::slotGetListFriends( void* core )
+{
+    size_t friendsListSize = tox_self_get_friend_list_size( tox );
+    uint32_t* friendsList = new uint32_t( friendsListSize );
+    QStringList qFriendList;
     tox_self_get_friend_list( tox, friendsList );
 
-    for ( size_t i = 0 ; i < sizeof ( &friendsList ) / sizeof ( uint32_t ); i++ ) {
+    for ( size_t i = 0 ; i < friendsListSize; i++ ) {
         qDebug() << friendsList[i];
+        qFriendList.append( toxGetFriendName( tox, friendsList[i], core, NULL ) );
     }
 
-    QStringList* result;
-    return result;
+    emit signalSendFriendList( qFriendList );
+}
+
+void core::slotSetStatus( TOX_USER_STATUS  status )
+{
+    tox_self_set_status( tox, status );
+}
+
+void core::slotFriendAdd( const QString& friendID, const QString& message )
+{
+    uint8_t* id = ( uint8_t* )convertString( friendID ).getDataFromQString();
+    uint8_t* msg = ( uint8_t* )convertString( message ).data();
+    tox_friend_add( tox, id, msg, sizeof ( msg ), NULL );
+}
+
+void core::slotUpdateUserData()
+{
+    uint32_t dataSize = tox_get_savedata_size( tox );
+    data.resize( dataSize  );
+    tox_get_savedata( tox, ( uint8_t* )data.data() );
+    QString userData = convertString( data ).getBytes().toHex();
+    emit signalSaveUserData( toxUser.Name, userData );
 }

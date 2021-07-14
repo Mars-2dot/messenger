@@ -13,8 +13,18 @@ convertString::convertString( const QByteArray& text )
 
 convertString::convertString( const uint8_t* text, size_t length )
 {
-    assert( length <= INT_MAX );
+    assert( length <= std::numeric_limits<size_t>::max() );
     string = QByteArray( reinterpret_cast<const char*>( text ), length );
+}
+
+convertString::convertString( const uint8_t* text, textType type )
+{
+    std::copy( &text[0], &text[type], std::back_inserter( string ) );
+}
+
+convertString::convertString( const uint8_t* data )
+{
+    std::copy( &data[0], &data[sizeof ( data )], std::back_inserter( string ) );
 }
 
 const uint8_t* convertString::data() const
@@ -35,5 +45,10 @@ QString convertString::getQString() const
 QByteArray convertString::getBytes() const
 {
     return QByteArray( string );
+}
+
+const uint8_t* convertString::getDataFromQString() const
+{
+    return reinterpret_cast<const uint8_t*>( QByteArray::fromHex( string ).data() );
 }
 

@@ -1,5 +1,0 @@
-/home/ilya/code/C++/messenger/Debug/CMakeFiles/rebuild_cache.dir
-/home/ilya/code/C++/messenger/Debug/CMakeFiles/edit_cache.dir
-/home/ilya/code/C++/messenger/Debug/CMakeFiles/ToxLite.dir
-/home/ilya/code/C++/messenger/Debug/CMakeFiles/ToxLite_autogen_timestamp_deps.dir
-/home/ilya/code/C++/messenger/Debug/CMakeFiles/ToxLite_autogen.dir

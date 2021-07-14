@@ -7,54 +7,103 @@ DataBase::DataBase( )
     if ( !( checkDataBase.exists() && checkDataBase.isFile() ) ) {
         dataBase.setDatabaseName( path );
         dataBase.open();
-        query.exec( sqlCommand[createNewTable] + sqlNameTable[users] + "(" + sqlVariable[idIntegerPrimaryKey] + "," +
-                    sqlVariable[nameText] + "," + sqlVariable[passwordText] + "," +
-                    sqlVariable[tokenText] + ")" );
 
-        query.exec( sqlCommand[createNewTable] + sqlNameTable[contacts] + "(" + sqlVariable[idIntegerPrimaryKey] + "," +
-                    sqlVariable[userText] + "," + sqlVariable[contactText] + "," +
-                    sqlVariable[saveMessageText] + ")" );
-        query.exec( sqlCommand[createNewTable] + sqlNameTable[registationList] + "(" + sqlVariable[idIntegerPrimaryKey] + "," +
-                    sqlVariable[nameText] + "," + sqlVariable[passwordText] + "," + sqlVariable[ipVar] + "," +
-                    sqlVariable[PortVar] + "," + sqlVariable[StatusVar] + ")" );
+        query.exec( sqlCommand[createNewTable] + sqlNameTable[users] + "(" +
+                    sqlVariable[idIntegerPrimaryKey] + "," +
+                    sqlVariable[nameVar] + "," +
+                    sqlVariable[passwordVar] + "," +
+                    sqlVariable[publicKeyVar] + "," +
+                    sqlVariable[privetKeyVar] + "," +
+                    sqlVariable[toxIDVar] + "," +
+                    sqlVariable[userDataVar] + ")" );
+
+        query.exec( sqlCommand[createNewTable] + sqlNameTable[requests] + "(" +
+                    sqlVariable[idIntegerPrimaryKey] + "," +
+                    sqlVariable[nameVar] + "," +
+                    sqlVariable[publicKeyVar] + "," +
+                    sqlVariable[messageVar] + ")" );
+
+        query.exec( sqlCommand[createNewTable] + sqlNameTable[contacts] + "(" +
+                    sqlVariable[idIntegerPrimaryKey] + "," +
+                    sqlVariable[nameVar] + "," +
+                    sqlVariable[friendNameVar] + "," +
+                    sqlVariable[publicKeyVar] + "," +
+                    sqlVariable[saveMessageVar] + ")" );
+
         spdlog::info( "Database created" );
     } else {
         dataBase.setDatabaseName( path );
         dataBase.open();
         spdlog::info( "Database is exists" );
     }
-
 }
 
-bool DataBase::checkUser( const QString& nameUser, const QString& passwordUser )
+bool DataBase::checkUser( const QString& nameUser, const QString& passwordUser, bool loginType )
 {
-    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[registationList] + sqlCommand[where] + sqlNameAttributes[name] +
+    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[users] + sqlCommand[where] + sqlNameAttributes[name] +
                 " = '" +
                 nameUser + "' " + sqlCommand[AND] + sqlNameAttributes[password] + " = '" + passwordUser + "'" );
-    bool inDataBase = false;
     record = query.record();
-    int portInx = record.indexOf( sqlNameAttributes[port] );
 
     if ( query.next() ) {
-        inDataBase = true;
+        loginType = true;
         spdlog::info( "User in database" );
-        emit signalSetPort( NULL, NULL, NULL, query.value( portInx ).toString().toInt() );
     }
 
-    return inDataBase;
+    loginType = false;
+
+    return loginType;
 }
 
-void DataBase::addUser( QString nameUser )
+bool DataBase::checkRegUser( const QString& nameUser, const QString& passwordUser, bool loginType )
 {
-    query.prepare( sqlCommand[insertInto] + sqlNameTable[users] + "(" + sqlNameAttributes[name] + "," +
-                   sqlNameAttributes[password] + ")" +
-                   sqlCommand[values] + "(" + ":" + sqlNameAttributes[name] + "," + ":" + sqlNameAttributes[password] + ")" );
+    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[users] + sqlCommand[where] + sqlNameAttributes[name] +
+                " = '" +
+                nameUser + "' " + sqlCommand[AND] + sqlNameAttributes[password] + " = '" + passwordUser + "'" );
+    record = query.record();
+
+    if ( query.next() ) {
+        loginType = true;
+        spdlog::info( "User in database" );
+    }
+
+    loginType = false;
+
+    return loginType;
+}
+
+void DataBase::addUser( const QString& nameUser,
+                        const QString& passwordUser,
+                        const QString& userData,
+                        const QString& publicKey,
+                        const QString& privetKey,
+                        const QString& toxID )
+{
+    query.prepare( sqlCommand[insertInto] +
+                   sqlNameTable[users] + "(" +
+                   sqlNameAttributes[name] + "," +
+                   sqlNameAttributes[password] + "," +
+                   sqlNameAttributes[publicKeyAtr] + "," +
+                   sqlNameAttributes[privetKeyAtr] + "," +
+                   sqlNameAttributes[toxIDAtr] + "," +
+                   sqlNameAttributes[userDataAtr] + ")" +
+                   sqlCommand[values] + "(" + ":" +
+                   sqlNameAttributes[name] + "," + ":" +
+                   sqlNameAttributes[password] + "," + ":" +
+                   sqlNameAttributes[publicKeyAtr] + "," + ":" +
+                   sqlNameAttributes[privetKeyAtr] + "," + ":" +
+                   sqlNameAttributes[toxIDAtr] + "," + ":" +
+                   sqlNameAttributes[userDataAtr] + ")" );
+
     query.bindValue( ":" + sqlNameAttributes[name], nameUser );
-    QString test = "tests";
-    query.bindValue( ":" + sqlNameAttributes[password], test ) ;
+    query.bindValue( ":" + sqlNameAttributes[password], passwordUser ) ;
+    query.bindValue( ":" + sqlNameAttributes[publicKeyAtr], privetKey ) ;
+    query.bindValue( ":" + sqlNameAttributes[privetKeyAtr], publicKey ) ;
+    query.bindValue( ":" + sqlNameAttributes[toxIDAtr], toxID ) ;
+    query.bindValue( ":" + sqlNameAttributes[userDataAtr], userData ) ;
 
     if ( !query.exec() ) {
-        spdlog::error( "Error of sql query" );
+        spdlog::error( "Error of sql query, in add user: " + query.lastError().text().toLocal8Bit() );
     } else {
         spdlog::info( "Add user in database" );
     }
@@ -133,10 +182,12 @@ bool DataBase::addInContactList( QString nameUser, QString contactUser )
     queryContacts.next();
 
     if ( queryContacts.value( userIndexContacts ).isNull() ) {
-        query.prepare( sqlCommand[insertInto] + sqlNameTable[contacts] + "(" + sqlNameAttributes[contact] + "," +
-                       sqlNameAttributes[user]  +
-                       ")"
-                       + sqlCommand[values] + "(" + ":" + sqlNameAttributes[contact] + "," + ":" + sqlNameAttributes[user] + ")" );
+        query.prepare( sqlCommand[insertInto] + sqlNameTable[contacts] + "(" +
+                       sqlNameAttributes[contact] + "," +
+                       sqlNameAttributes[user]  + ")" +
+                       sqlCommand[values] + "(" + ":" +
+                       sqlNameAttributes[contact] + "," + ":" +
+                       sqlNameAttributes[user] + ")" );
 
         query.bindValue( ":" + sqlNameAttributes[contact],  contactUser );
         query.bindValue( ":" + sqlNameAttributes[user],  nameUser );
@@ -152,6 +203,42 @@ bool DataBase::addInContactList( QString nameUser, QString contactUser )
         spdlog::info( "The user is already in the contact list" );
         return false;
     }
+}
+
+QString DataBase::getPublicKey( const QString& nameUser )
+{
+    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[requests] + sqlCommand[where] + sqlNameAttributes[name] +
+                " = '" + nameUser + "' " );
+    record = query.record();
+    int publicKeyInd = record.indexOf( sqlNameAttributes[publicKeyAtr] );
+    QString publicKey;
+
+    if ( query.next() ) {
+        publicKey = query.value( publicKeyInd ).toString() ;
+        spdlog::info( "Public key received" );
+    } else {
+        spdlog::error( "Error of public key received" );
+    }
+
+    return publicKey;
+}
+
+QString DataBase::getUserPublicKey( const QString& nameUser )
+{
+    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[users] + sqlCommand[where] + sqlNameAttributes[name] +
+                " = '" + nameUser + "' " );
+    record = query.record();
+    int publicKeyInd = record.indexOf( sqlNameAttributes[publicKeyAtr] );
+    QString publicKey;
+
+    if ( query.next() ) {
+        publicKey = query.value( publicKeyInd ).toString() ;
+        spdlog::info( "Public key received" );
+    } else {
+        spdlog::error( "Error of public key received" );
+    }
+
+    return publicKey;
 }
 
 void DataBase::saveUserMessage( const QString* nameUser, const QString* message, const QString* nameUserFrom )
@@ -185,6 +272,68 @@ void DataBase::saveUserMessage( const QString* nameUser, const QString* message,
         if ( !queryContacts.exec() ) {
             spdlog::error( "Error of sql query in Contacts" );
         }
+    }
+}
+
+void DataBase::slotAddRequest( const QString& Name, const QString& PublicKey, const QString& Message )
+{
+    query.prepare( sqlCommand[insertInto] +
+                   sqlNameTable[requests] + "(" +
+                   sqlNameAttributes[name] + "," +
+                   sqlNameAttributes[publicKeyAtr] + "," +
+                   sqlNameAttributes[messageAtr] + ")" +
+                   sqlCommand[values] + "(" + ":" +
+                   sqlNameAttributes[name] + "," + ":" +
+                   sqlNameAttributes[publicKeyAtr] + "," + ":" +
+                   sqlNameAttributes[messageAtr] + ")" );
+    query.bindValue( ":" + sqlNameAttributes[name], Name );
+    query.bindValue( ":" + sqlNameAttributes[publicKeyAtr], PublicKey );
+    query.bindValue( ":" + sqlNameAttributes[messageAtr], Message );
+
+    if ( !query.exec() ) {
+        spdlog::error( "Error of sql query: " + query.lastError().text().toLocal8Bit() );
+    } else {
+        spdlog::info( "Add request in database" );
+    }
+}
+
+void DataBase::slotAddFriend( const QString& Name, const QString& friendUser, const QString& PublicKey )
+{
+    query.prepare( sqlCommand[insertInto] +
+                   sqlNameTable[contacts] + "(" +
+                   sqlNameAttributes[name] + "," +
+                   sqlNameAttributes[friendNameAtr] + "," +
+                   sqlNameAttributes[publicKeyAtr] + ")" +
+                   sqlCommand[values] + "(" + ":" +
+                   sqlNameAttributes[name] + "," + ":" +
+                   sqlNameAttributes[friendNameAtr] + "," + ":" +
+                   sqlNameAttributes[publicKeyAtr] + ")" );
+    query.bindValue( ":" + sqlNameAttributes[name], Name );
+    query.bindValue( ":" + sqlNameAttributes[friendNameAtr], friendUser );
+    query.bindValue( ":" + sqlNameAttributes[publicKeyAtr], PublicKey );
+    query.bindValue( ":" + sqlNameAttributes[messageAtr], "" );
+
+    if ( !query.exec() ) {
+        spdlog::error( "Error of sql query, in add friend: " + query.lastError().text().toLocal8Bit() );
+    } else {
+        spdlog::info( "Add friend in database" );
+    }
+}
+
+void DataBase::slotSaveData( const QString& Name, const QString& userData )
+{
+    query.prepare( sqlCommand[update] + sqlNameTable[users] + sqlCommand[set] + sqlNameAttributes[userDataAtr] +
+                   "=:" + sqlNameAttributes[userDataAtr]
+                   + sqlCommand[where] + sqlNameAttributes[name] + "=:" + sqlNameAttributes[name]
+                 );
+    query.bindValue( ":" + sqlNameAttributes[name],
+                     Name );
+    query.bindValue( ":" + sqlNameAttributes[userDataAtr],
+                     userData );
+
+    if ( !query.exec() ) {
+        spdlog::error( "Error of sql query in update status" );
+        spdlog::error(  query.lastError().text().toLocal8Bit() );
     }
 }
 
@@ -250,6 +399,30 @@ QString DataBase::getUnreadMessage( QString nameUser, QString sender )
     }
 
     return unreadMessages;
+}
+
+QString DataBase::getUserData( const QString& nameUser )
+{
+    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[users] + sqlCommand[where] + sqlNameAttributes[name]
+                + "= '" + nameUser + "'"
+              );
+    record = query.record();
+    int userData = record.indexOf( sqlNameAttributes[userDataAtr] );
+    query.next();
+    QString data = query.value( userData ).toString();
+    return data;
+}
+
+QString DataBase::getToxID( const QString& nameUser )
+{
+    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[users] + sqlCommand[where] + sqlNameAttributes[name]
+                + "= '" + nameUser + "'"
+              );
+    record = query.record();
+    int toxID = record.indexOf( sqlNameAttributes[toxIDAtr] );
+    query.next();
+    QString id = query.value( toxID ).toString();
+    return id;
 }
 
 void DataBase::slotUpdateRegistationData( const QString& nameUser, const QString& passwordUser, const QString& ipUser,

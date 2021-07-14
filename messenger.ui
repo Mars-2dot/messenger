@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>825</width>
-    <height>620</height>
+    <width>917</width>
+    <height>660</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@ color:black;</string>
    <enum>Qt::ToolButtonIconOnly</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
     <property name="leftMargin">
      <number>0</number>
     </property>
@@ -39,8 +39,11 @@ color:black;</string>
       <property name="styleSheet">
        <string notr="true">background: rgb(38, 39, 40);</string>
       </property>
-      <property name="currentIndex">
+      <property name="lineWidth">
        <number>1</number>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
       </property>
       <widget class="QWidget" name="login">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -272,7 +275,7 @@ QLineEdit:focus
                   <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
                  </property>
                  <property name="text">
-                  <string>1111</string>
+                  <string>111</string>
                  </property>
                  <property name="maxLength">
                   <number>30</number>
@@ -361,38 +364,6 @@ QPushButton:pressed
                   </widget>
                  </item>
                 </layout>
-               </item>
-               <item>
-                <widget class="QLabel" name="login_error">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>551</width>
-                   <height>21</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>551</width>
-                   <height>21</height>
-                  </size>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">font: 10pt &quot;Open Sans Light&quot;;
-color:rgb(215, 213, 217);</string>
-                 </property>
-                 <property name="text">
-                  <string>Connection...</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
                </item>
               </layout>
              </item>
@@ -799,14 +770,29 @@ QPushButton:pressed
        </layout>
       </widget>
       <widget class="QWidget" name="main">
-       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <layout class="QVBoxLayout" name="verticalLayout_11">
         <item>
          <widget class="QSplitter" name="splitter">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <widget class="QWidget" name="layoutWidget">
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout" name="verticalLayout_10">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetNoConstraint</enum>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>9</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_8">
               <item>
@@ -831,7 +817,7 @@ QPushButton:pressed
                 </property>
                 <property name="baseSize">
                  <size>
-                  <width>101</width>
+                  <width>93</width>
                   <height>51</height>
                  </size>
                 </property>
@@ -899,7 +885,7 @@ QPushButton:pressed
                 </property>
                 <property name="baseSize">
                  <size>
-                  <width>101</width>
+                  <width>93</width>
                   <height>51</height>
                  </size>
                 </property>
@@ -942,111 +928,243 @@ QPushButton:pressed
              </layout>
             </item>
             <item>
-             <widget class="QLineEdit" name="search">
-              <property name="styleSheet">
-               <string notr="true">border: rgb(215, 213, 217);
-background: rgb(54, 57, 63);
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <item>
+               <widget class="QLineEdit" name="search">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="baseSize">
+                 <size>
+                  <width>211</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"> background:rgb(54, 57, 63);
 color:rgb(215, 213, 217);
-</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QListWidget" name="listUser">
-              <property name="styleSheet">
-               <string notr="true">border:rgb(38, 39, 40);
-color:rgb(215, 213, 217)</string>
-              </property>
-             </widget>
+ font: 13pt &quot;Open Sans Light&quot;;</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QListWidget" name="listUser">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="baseSize">
+                 <size>
+                  <width>211</width>
+                  <height>501</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"> background:rgb(54, 57, 63);
+color:rgb(215, 213, 217);
+ font: 13pt &quot;Open Sans Light&quot;;</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="layoutWidget_3">
-           <layout class="QFormLayout" name="formLayout_2">
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>6</number>
-            </property>
-            <property name="bottomMargin">
-             <number>6</number>
-            </property>
-            <item row="1" column="0" colspan="2">
-             <widget class="QLabel" name="chat">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>491</width>
-                <height>471</height>
-               </size>
-              </property>
-              <property name="autoFillBackground">
-               <bool>false</bool>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"> background:rgb(54, 57, 63);
-color:rgb(215, 213, 217)</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLineEdit" name="input">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>530</width>
-                <height>35</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"> background:rgb(54, 57, 63);
-color: rgb(215, 213, 217);
-border: rgb(215, 213, 217);</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QPushButton" name="send">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>50</width>
-                <height>35</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"> QPushButton:enabled
+          <widget class="QStackedWidget" name="chatStackWidget">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="baseSize">
+            <size>
+             <width>691</width>
+             <height>611</height>
+            </size>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="chatPage">
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="QSplitter" name="splitter_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <widget class="QSplitter" name="splitter_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <widget class="QCommandLinkButton" name="copyToxId">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>451</width>
+                   <height>36</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: blue</string>
+                 </property>
+                 <property name="text">
+                  <string>Your tox ID(click to copy):</string>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="chat">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>451</width>
+                   <height>481</height>
+                  </size>
+                 </property>
+                 <property name="baseSize">
+                  <size>
+                   <width>20</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::DefaultContextMenu</enum>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>-1</number>
+                 </property>
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"> background:rgb(54, 57, 63);
+color:rgb(215, 213, 217);
+ font: 13pt &quot;Open Sans Light&quot;;</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buddy">
+                  <cstring>input</cstring>
+                 </property>
+                </widget>
+               </widget>
+               <widget class="QWidget" name="layoutWidget">
+                <layout class="QHBoxLayout" name="horizontalLayout">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>9</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>9</number>
+                 </property>
+                 <item>
+                  <widget class="QLineEdit" name="input">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>393</width>
+                     <height>39</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"> background:rgb(54, 57, 63);
+color:rgb(215, 213, 217);
+ font: 13pt &quot;Open Sans Light&quot;;</string>
+                   </property>
+                   <property name="cursorPosition">
+                    <number>0</number>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="send">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>50</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTipDuration">
+                    <number>-1</number>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"> QPushButton:enabled
 {
                 border-image: url(:/Resources/send.png);
                 background:  #73739b;
@@ -1076,20 +1194,261 @@ QPushButton:pressed
  {
         background: #8f8fb3;
 }</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" colspan="2">
-             <widget class="QCommandLinkButton" name="copyToxId">
-              <property name="styleSheet">
-               <string notr="true">color: blue</string>
-              </property>
-              <property name="text">
-               <string>Your tox ID(click to copy):</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="requests">
+            <layout class="QVBoxLayout" name="verticalLayout_13">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                 <item>
+                  <widget class="QLabel" name="label">
+                   <property name="styleSheet">
+                    <string notr="true">QLabel
+{
+        font: 13pt &quot;Open Sans Light&quot;;
+        color:rgb(215, 213, 217);
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>Tox ID:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="friendToxId">
+                   <property name="styleSheet">
+                    <string notr="true"> background:rgb(54, 57, 63);
+color:rgb(215, 213, 217);
+ font: 13pt &quot;Open Sans Light&quot;;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="buttonFriendAdd">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>80</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton:enabled
+{
+                font: 13pt &quot;Open Sans Semibold&quot;;
+                background:  #73739b;
+                border-radius: 3px;
+                min-height:25px;
+                padding: 5px;
+                outline: 0;
+            color: white;
+}
+
+QPushButton:disable
+{
+                font: 13pt &quot;Open Sans Semibold&quot;;
+                background:  gray;
+                border-radius: 3px;
+                min-height:25px;
+                padding: 5px;
+                outline: 0;
+            color: white;
+}
+
+
+QPushButton:hover
+{
+                background: #7a7aa1;
+}
+
+QPushButton:pressed
+ {
+        background: #8f8fb3;
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>Add</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="messageForFriend">
+                 <property name="styleSheet">
+                  <string notr="true"> background:rgb(54, 57, 63);
+color:rgb(215, 213, 217);
+ font: 13pt &quot;Open Sans Light&quot;;</string>
+                 </property>
+                 <property name="text">
+                  <string>Tox me mabe?</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QListWidget" name="listRequests">
+                 <property name="styleSheet">
+                  <string notr="true"> background:rgb(54, 57, 63);
+color:rgb(215, 213, 217);
+ font: 13pt &quot;Open Sans Light&quot;;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <property name="spacing">
+                  <number>6</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>9</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>9</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>9</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>9</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="requestAccept">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>124</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton:enabled
+{
+                font: 13pt &quot;Open Sans Semibold&quot;;
+                background:  #73739b;
+                border-radius: 3px;
+                min-height:25px;
+                padding: 5px;
+                outline: 0;
+            color: white;
+}
+
+QPushButton:disable
+{
+                font: 13pt &quot;Open Sans Semibold&quot;;
+                background:  gray;
+                border-radius: 3px;
+                min-height:25px;
+                padding: 5px;
+                outline: 0;
+            color: white;
+}
+
+
+QPushButton:hover
+{
+                background: #7a7aa1;
+}
+
+QPushButton:pressed
+ {
+        background: #8f8fb3;
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>Accept</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="requestReject">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>124</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton:enabled
+{
+                font: 13pt &quot;Open Sans Semibold&quot;;
+                background:  #73739b;
+                border-radius: 3px;
+                min-height:25px;
+                padding: 5px;
+                outline: 0;
+            color: white;
+}
+
+QPushButton:disable
+{
+                font: 13pt &quot;Open Sans Semibold&quot;;
+                background:  gray;
+                border-radius: 3px;
+                min-height:25px;
+                padding: 5px;
+                outline: 0;
+            color: white;
+}
+
+
+QPushButton:hover
+{
+                background: #7a7aa1;
+}
+
+QPushButton:pressed
+ {
+        background: #8f8fb3;
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>Reject</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </widget>
         </item>
@@ -1104,13 +1463,35 @@ QPushButton:pressed
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>825</width>
-     <height>20</height>
+     <width>917</width>
+     <height>19</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>login_password</tabstop>
+  <tabstop>login_button</tabstop>
+  <tabstop>login_signup</tabstop>
+  <tabstop>signup_username</tabstop>
+  <tabstop>signup_password</tabstop>
+  <tabstop>signup_confirm</tabstop>
+  <tabstop>signup_button</tabstop>
+  <tabstop>signup_login</tabstop>
+  <tabstop>add_button</tabstop>
+  <tabstop>login_username</tabstop>
+  <tabstop>contact_button</tabstop>
+  <tabstop>search</tabstop>
+  <tabstop>listUser</tabstop>
+  <tabstop>copyToxId</tabstop>
+  <tabstop>input</tabstop>
+  <tabstop>friendToxId</tabstop>
+  <tabstop>buttonFriendAdd</tabstop>
+  <tabstop>listRequests</tabstop>
+  <tabstop>requestAccept</tabstop>
+  <tabstop>requestReject</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
   <include location="resources.qrc"/>

@@ -9,6 +9,18 @@ messenger::messenger( QWidget* parent )
     connect( thread, &QThread::finished, thread, &QThread::deleteLater );
     connect( tox, &core::signalSetId, this, &messenger::slotSetId, Qt::DirectConnection );
     connect( tox, &core::signalSendMessage, this, &messenger::slotNewMessage, Qt::DirectConnection );
+    connect( tox, &core::signalFriendRequest, this, &messenger::slotFriendRequest, Qt::DirectConnection );
+    connect( tox, &core::signalSendFriendList, this, &messenger::slotFriendListUpdate, Qt::DirectConnection );
+    connect( tox, &core::signalError, this, &messenger::slotError, Qt::DirectConnection );
+    connect( tox, &core::signalCheckSuccessful, this, &messenger::slotCheckSuccessful, Qt::DirectConnection );
+    connect( tox, &core::signalSetStatus, this, &messenger::slotSetStatus, Qt::DirectConnection );
+    connect( this, &messenger::signalAcceptFriendRequest, tox, &core::slotAddFriend, Qt::DirectConnection );
+    connect( this, &messenger::signalToxStart, &messenger::slotToxStart );
+    connect( this, &messenger::signalAcceptFriendRequest, tox, &core::slotAcceptFriendRequest, Qt::DirectConnection );
+    connect( this, &messenger::signalSend, tox, &core::slotSendMessage, Qt::DirectConnection );
+    connect( this, &messenger::signalCheckUser, tox, &core::slotCheckUser, Qt::DirectConnection );
+    connect( this, &messenger::signalUpdateFriendList, tox, &core::slotGetListFriends, Qt::DirectConnection );
+    connect( this, &messenger::signalFriendAdd, tox, &core::slotFriendAdd, Qt::DirectConnection );
 }
 
 messenger::~messenger()
@@ -16,7 +28,7 @@ messenger::~messenger()
 
 }
 
-void messenger::slotUpdateUserList( const QString& name, const QString& password, const QString& ip, const int port )
+void messenger::slotUpdateUserList( const QString& name )
 {
     listUser->addItem( name );
 }
@@ -33,10 +45,13 @@ void messenger::slotOperationSuccessful( const int code )
 
 void messenger::slotSetId( const QString& id )
 {
+    statusBar()->addWidget( status );
+    status->setStyleSheet( "QLabel { font: 13pt \"Open Sans Light\"; color:rgb(215, 213, 217);}" );
+    status->setText( "Connecting, please wait" );
     copyToxId->setText( copyToxId->text() + id );
 }
 
-void messenger::slotError( const int code )
+void messenger::slotError( int code )
 {
     switch ( code ) {
         case 0: {
@@ -64,6 +79,10 @@ void messenger::slotError( const int code )
         }
         break;
 
+        case 5: {
+            QMessageBox::critical( 0, "Critical", "Error of read ID from database", "Ok" );
+        }
+        break;
     }
 }
 
@@ -71,15 +90,22 @@ void messenger::slotSetStatus( const int code )
 {
     switch ( code ) {
         case 1: {
-        } break;
+            status->setStyleSheet( "QLabel { font: 13pt \"Open Sans Light\"; color:red;}" );
+            status->setText( "Offline" );
+        }
+        break;
 
         case 2: {
-
-        } break;
+            status->setStyleSheet( "QLabel { font: 13pt \"Open Sans Light\"; color:rgb(215, 213, 217);}" );
+            status->setText( "Online, using UDP" );
+        }
+        break;
 
         case 3: {
-
-        } break;
+            status->setStyleSheet( "QLabel { font: 13pt \"Open Sans Light\"; color:rgb(215, 213, 217);}" );
+            status->setText( "Online, using TCP" );
+        }
+        break;
     }
 }
 
@@ -88,9 +114,38 @@ void messenger::slotConnectSuccessful( const QString&, const QString& )
 
 }
 
-void messenger::slotNewMessage( const uint32_t friendId, const QString& message )
+void messenger::slotNewMessage( const QString& name, const QString& message, uint32_t number )
 {
-    chat->setText( chat->text() + "\n" + friendId + "->" + message );
+    chat->setText( chat->text() + "\n" + name + "->" + message );
+}
+
+void messenger::slotFriendRequest( const QString& message )
+{
+    listRequests->addItem( message );
+}
+
+void messenger::slotFriendListUpdate( QStringList& list )
+{
+    if ( !list.isEmpty() ) {
+        for ( int i = 0; i < list.size(); i++ ) {
+            if ( listUser->findItems( list.at( i ), Qt::MatchFixedString ).isEmpty() ) {
+                listUser->addItem( list.at( i ) );
+            }
+        }
+    }
+}
+
+void messenger::slotToxStart( const QString& name, const QString& password, const bool loginType )
+{
+    tox->login( name, password, loginType );
+    tox->moveToThread( thread );
+    thread->start();
+}
+
+void messenger::slotCheckSuccessful( const QString& name, const QString& password, const bool loginType )
+{
+    emit signalToxStart( name, password, loginType );
+    stackedWidget->setCurrentIndex( 2 );
 }
 
 void messenger::on_login_signup_clicked()
@@ -101,15 +156,9 @@ void messenger::on_login_signup_clicked()
 void messenger::on_signup_button_clicked()
 {
     if ( signup_password->text() == signup_confirm->text() ) {
-        QString name = signup_username->text(), password = signup_password->text();
-
-        tox->login( true, name, password );
-        tox->moveToThread( thread );
-        thread->start();
-
-        emit signalAddRegUser( signup_username->text(), signup_password->text(), "", 0 );
-
-        stackedWidget->setCurrentIndex( 2 );
+        emit signalCheckUser( login_username->text(), login_password->text(), false );
+        toxUser.Name = login_username->text();
+        toxUser.Password = login_password->text();
     } else {
         slotError( 1 );
     }
@@ -117,7 +166,9 @@ void messenger::on_signup_button_clicked()
 
 void messenger::on_login_button_clicked()
 {
-    emit signalCheckUser( login_username->text(), login_password->text() );
+    emit signalCheckUser( login_username->text(), login_password->text(), true );
+    toxUser.Name = login_username->text();
+    toxUser.Password = login_password->text();
 }
 
 void messenger::on_signup_login_clicked()
@@ -127,14 +178,16 @@ void messenger::on_signup_login_clicked()
 
 void messenger::on_input_textEdited( const QString& arg1 )
 {
-    if ( !arg1.isEmpty() && !listUser->currentItem()->text().isEmpty() ) {
+    if ( arg1.isEmpty() ) {
+        send->setDisabled( true );
+    } else {
         send->setDisabled( false );
     }
 }
 
 void messenger::on_send_clicked()
 {
-    emit signalSend( "User|" + input->text() );
+    emit signalSend(  input->text(), 0 );
 }
 
 void messenger::on_listUser_currentTextChanged( const QString& currentText )
@@ -147,6 +200,71 @@ void messenger::on_copyToxId_clicked()
     if ( QClipboard* c = QApplication::clipboard() ) {
         c->disconnect( this );
         c->setText( copyToxId->text().split( ":" )[1] );
+    }
+}
+
+void messenger::on_listRequests_itemClicked( QListWidgetItem* item )
+{
+    requestAccept->setDisabled( false );
+    requestReject->setDisabled( false );
+}
+
+void messenger::on_add_button_clicked()
+{
+    chatStackWidget->setCurrentIndex( 1 );
+}
+
+void messenger::on_contact_button_clicked()
+{
+    chatStackWidget->setCurrentIndex( 0 );
+
+    if ( tox != nullptr ) {
+        emit signalUpdateFriendList( tox );
+    }
+}
+
+void messenger::on_requestAccept_clicked()
+{
+    if ( listRequests->count() > 0 ) {
+        emit signalAcceptFriendRequest( listRequests->currentItem()->text().split( " " )[0] );
+        QListWidgetItem* item = listRequests->takeItem( listRequests->currentRow() );
+        delete item;
+        requestAccept->setDisabled( true );
+        requestReject->setDisabled( true );
+    }
+}
+
+void messenger::on_buttonFriendAdd_clicked()
+{
+    emit signalFriendAdd( friendToxId->text(), messageForFriend->text() );
+    friendToxId->clear();
+}
+
+void messenger::on_input_textChanged( const QString& arg1 )
+{
+    if ( arg1.isEmpty() ) {
+        send->setDisabled( true );
+    } else {
+        send->setDisabled( false );
+    }
+}
+
+void messenger::on_requestReject_clicked()
+{
+    if ( listRequests->count() > 0 ) {
+        QListWidgetItem* item = listRequests->takeItem( listRequests->currentRow() );
+        delete item;
+        requestAccept->setDisabled( true );
+        requestReject->setDisabled( true );
+    }
+}
+
+void messenger::on_friendToxId_textChanged( const QString& arg1 )
+{
+    if ( arg1.size() == 76 ) {
+        buttonFriendAdd->setDisabled( false );
+    } else {
+        buttonFriendAdd->setDisabled( true );
     }
 }
 
