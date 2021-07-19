@@ -30,7 +30,7 @@
 
 extern "C" {
 
-#include "tox/tox.h"
+#include "toxcore/tox.h"
 
 }
 
