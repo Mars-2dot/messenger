@@ -26,11 +26,11 @@
 #include <QSettings>
 #include <QResizeEvent>
 #include <QThread>
-#include <sodium/utils.h>
+#include "sodium/utils.h"
 
 extern "C" {
 
-#include <tox/tox.h>
+#include "tox/tox.h"
 
 }
 
