@@ -11,6 +11,23 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+message(STATUS "Downloading conan.cmake from
+https://github.com/conan-io/cmake-conan")
+file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-
+conan/master/conan.cmake"
+              "${CMAKE_BINARY_DIR}/conan.cmake")
+endif()
+include(${CMAKE_BINARY_DIR}/conan.cmake)
+conan_basic_setup()
+conan_cmake_run(REQUIRES
+    libsodium/1.0.18
+    pthreads4w/3.0.0
+    opus/1.3.1
+    libvpx/1.9.0
+            BASIC_SETUP
+            BUILD missing)
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Network Sql REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network Sql REQUIRED)
 find_package(toxcore)
