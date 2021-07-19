@@ -29,7 +29,7 @@ public:
     size_t size() const;
     QString getQString() const;
     QByteArray getBytes() const;
-    const uint8_t* getDataFromQString() const;
+    uint8_t* getDataFromQString() const;
 };
 
 #endif // CONVERTSTRING_H

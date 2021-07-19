@@ -27,7 +27,7 @@ private:
                                "requests"			//3
                               };
 
-    QString sqlVariable[16] = {
+    QString sqlVariable[17] = {
         """id integer primary key",  //0
         """Name text(255)",          //1
         """Password text(255)",      //2
@@ -44,9 +44,10 @@ private:
         """PrivetKey text(255)",   	 //13
         """toxID text(255)",   	     //14
         """Friend text(255)",   	 //15
+        """numberFriend text(255)",  //16
     };
 
-    QString sqlNameAttributes[15] = {
+    QString sqlNameAttributes[16] = {
         "Name",          //0
         "Password",      //1
         "Token",         //2
@@ -61,7 +62,8 @@ private:
         "Data",			 //11
         "PrivetKey",     //12
         "toxID",         //13
-        "Friend",         //14
+        "Friend",        //14
+        "numberFriend",  //15
     };
     QSqlQuery query, queryContacts;
     QSqlRecord record = query.record();
@@ -94,6 +96,7 @@ public:
         privetKeyVar = 13,
         toxIDVar = 14,
         friendNameVar = 15,
+        numberFriendVar = 16,
         //sql name attributes
         name = 0,
         password = 1,
@@ -110,6 +113,7 @@ public:
         privetKeyAtr = 12,
         toxIDAtr = 13,
         friendNameAtr = 14,
+        numberFriendAtr = 15,
         //sql name tables
         users = 0,
         contacts = 1,
@@ -141,14 +145,29 @@ public:
     QString getUnreadMessage( QString nameUser, QString sender );
     QString getUserData( const QString& nameUser );
     QString getToxID( const QString& nameUser );
+    int 	getFriendNumber( const QString& Name );
 
 public slots:
-    void slotUpdateRegistationData( const QString& nameUser, const QString& passwordUser, const QString& ipUser,
+    void slotUpdateRegistationData( const QString& nameUser,
+                                    const QString& passwordUser,
+                                    const QString& ipUser,
                                     const int portUser );
-    void slotUpdateStatus( const QString& nameUser, const QString& status );
+
+    void slotUpdateStatus( const QString& nameUser,
+                           const QString& status );
+
     void slotGetPort( const QString& nameUser );
-    void slotAddRequest( const QString& Name, const QString& PublicKey, const QString& Message );
-    void slotAddFriend( const QString& Name, const QString& friendUser, const QString& PublicKey );
+
+    void slotAddRequest( const QString& Name,
+                         const QString& PublicKey,
+                         const QString& Message );
+
+    void slotAddFriend( const QString& Name,
+                        const QString& friendUser,
+                        const QString& PublicKey,
+                        const QString& userData,
+                        const QString& numberFriend );
+
     void slotSaveData( const QString& Name, const QString& userData );
 signals:
     void signalSetPort( const QString&, const QString&, const QString&, const int );

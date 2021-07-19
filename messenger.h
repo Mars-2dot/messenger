@@ -47,28 +47,27 @@ private slots:
 
 private slots:
     void on_login_signup_clicked();
-    void on_signup_button_clicked();
     void on_login_button_clicked();
+    void on_signup_button_clicked();
     void on_signup_login_clicked();
-    void on_input_textEdited( const QString& arg1 );
-    void on_send_clicked();
-    void on_listUser_currentTextChanged( const QString& currentText );
     void on_copyToxId_clicked();
-    void on_listRequests_itemClicked( QListWidgetItem* item );
+    void on_send_clicked();
     void on_add_button_clicked();
     void on_contact_button_clicked();
     void on_requestAccept_clicked();
+    void on_requestReject_clicked();
     void on_buttonFriendAdd_clicked();
     void on_input_textChanged( const QString& arg1 );
-    void on_requestReject_clicked();
     void on_friendToxId_textChanged( const QString& arg1 );
+    void on_listUser_itemClicked( QListWidgetItem* item );
+    void on_listRequests_itemClicked( QListWidgetItem* item );
 
 signals:
     void signalToxStart( const QString& name, const QString& pasword, const bool loginType );
     void signalSetUserData( const QString&, const QString& );
     void signalCheckUser( const QString& name, const QString& password, const bool loginType );
     void signalAddRegUser( const QString&, const QString&, const QString&, const int );
-    void signalSend( const QString& message, uint32_t number );
+    void signalSend( const QString& message, const QString& name );
     void signalGetPort( const QString& nameUser );
     void signalGetFriendList();
     void signalAcceptFriendRequest( const QString& message );

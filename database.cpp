@@ -28,6 +28,7 @@ DataBase::DataBase( )
                     sqlVariable[nameVar] + "," +
                     sqlVariable[friendNameVar] + "," +
                     sqlVariable[publicKeyVar] + "," +
+                    sqlVariable[numberFriendVar] + "," +
                     sqlVariable[saveMessageVar] + ")" );
 
         spdlog::info( "Database created" );
@@ -48,9 +49,9 @@ bool DataBase::checkUser( const QString& nameUser, const QString& passwordUser, 
     if ( query.next() ) {
         loginType = true;
         spdlog::info( "User in database" );
+    } else {
+        loginType = false;
     }
-
-    loginType = false;
 
     return loginType;
 }
@@ -63,11 +64,9 @@ bool DataBase::checkRegUser( const QString& nameUser, const QString& passwordUse
     record = query.record();
 
     if ( query.next() ) {
-        loginType = true;
+        loginType = false;
         spdlog::info( "User in database" );
     }
-
-    loginType = false;
 
     return loginType;
 }
@@ -297,20 +296,24 @@ void DataBase::slotAddRequest( const QString& Name, const QString& PublicKey, co
     }
 }
 
-void DataBase::slotAddFriend( const QString& Name, const QString& friendUser, const QString& PublicKey )
+void DataBase::slotAddFriend( const QString& Name, const QString& friendUser, const QString& PublicKey,
+                              const QString& userData, const QString& numberFriend )
 {
     query.prepare( sqlCommand[insertInto] +
                    sqlNameTable[contacts] + "(" +
                    sqlNameAttributes[name] + "," +
                    sqlNameAttributes[friendNameAtr] + "," +
+                   sqlNameAttributes[numberFriendAtr] + "," +
                    sqlNameAttributes[publicKeyAtr] + ")" +
                    sqlCommand[values] + "(" + ":" +
                    sqlNameAttributes[name] + "," + ":" +
                    sqlNameAttributes[friendNameAtr] + "," + ":" +
+                   sqlNameAttributes[numberFriendAtr] + "," + ":" +
                    sqlNameAttributes[publicKeyAtr] + ")" );
     query.bindValue( ":" + sqlNameAttributes[name], Name );
     query.bindValue( ":" + sqlNameAttributes[friendNameAtr], friendUser );
     query.bindValue( ":" + sqlNameAttributes[publicKeyAtr], PublicKey );
+    query.bindValue( ":" + sqlNameAttributes[numberFriendAtr], numberFriend );
     query.bindValue( ":" + sqlNameAttributes[messageAtr], "" );
 
     if ( !query.exec() ) {
@@ -318,10 +321,8 @@ void DataBase::slotAddFriend( const QString& Name, const QString& friendUser, co
     } else {
         spdlog::info( "Add friend in database" );
     }
-}
 
-void DataBase::slotSaveData( const QString& Name, const QString& userData )
-{
+    QString oldData = getUserData( Name );
     query.prepare( sqlCommand[update] + sqlNameTable[users] + sqlCommand[set] + sqlNameAttributes[userDataAtr] +
                    "=:" + sqlNameAttributes[userDataAtr]
                    + sqlCommand[where] + sqlNameAttributes[name] + "=:" + sqlNameAttributes[name]
@@ -334,6 +335,36 @@ void DataBase::slotSaveData( const QString& Name, const QString& userData )
     if ( !query.exec() ) {
         spdlog::error( "Error of sql query in update status" );
         spdlog::error(  query.lastError().text().toLocal8Bit() );
+    }
+
+    if ( oldData == getUserData( Name ) ) {
+        spdlog::error( "Error of writing new user data" );
+    } else {
+        spdlog::info( "Writing new user data" );
+    }
+}
+
+void DataBase::slotSaveData( const QString& Name, const QString& userData )
+{
+    QString oldData = getUserData( Name );
+    query.prepare( sqlCommand[update] + sqlNameTable[users] + sqlCommand[set] + sqlNameAttributes[userDataAtr] +
+                   "=:" + sqlNameAttributes[userDataAtr]
+                   + sqlCommand[where] + sqlNameAttributes[name] + "=:" + sqlNameAttributes[name]
+                 );
+    query.bindValue( ":" + sqlNameAttributes[name],
+                     Name );
+    query.bindValue( ":" + sqlNameAttributes[userDataAtr],
+                     userData );
+
+    if ( !query.exec() ) {
+        spdlog::error( "Error of sql query in update status" );
+        spdlog::error(  query.lastError().text().toLocal8Bit() );
+    }
+
+    if ( oldData == getUserData( Name ) ) {
+        spdlog::error( "Error of writing new user data" );
+    } else {
+        spdlog::error( "Writing new user data" );
     }
 }
 
@@ -423,6 +454,18 @@ QString DataBase::getToxID( const QString& nameUser )
     query.next();
     QString id = query.value( toxID ).toString();
     return id;
+}
+
+int DataBase::getFriendNumber( const QString& Name )
+{
+    query.exec( sqlCommand[selectAllFrom] + sqlNameTable[contacts] + sqlCommand[where] + sqlNameAttributes[name]
+                + "= '" + Name + "'"
+              );
+    record = query.record();
+    int toxID = record.indexOf( sqlNameAttributes[numberFriendAtr] );
+    query.next();
+    int nubmer = query.value( toxID ).toInt();
+    return nubmer;
 }
 
 void DataBase::slotUpdateRegistationData( const QString& nameUser, const QString& passwordUser, const QString& ipUser,

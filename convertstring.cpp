@@ -47,8 +47,8 @@ QByteArray convertString::getBytes() const
     return QByteArray( string );
 }
 
-const uint8_t* convertString::getDataFromQString() const
+uint8_t* convertString::getDataFromQString() const
 {
-    return reinterpret_cast<const uint8_t*>( QByteArray::fromHex( string ).data() );
+    return ( uint8_t* )reinterpret_cast<const uint8_t*>( QByteArray::fromHex( string ).data() );
 }
 
