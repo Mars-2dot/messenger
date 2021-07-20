@@ -25,6 +25,7 @@ conan_cmake_configure(REQUIRES
     opus/1.3.1
     libvpx/1.9.0
     spdlog/1.8.5
+    openssl/1.1.1k
     GENERATORS cmake_find_package)
 
 conan_cmake_autodetect(settings)
@@ -38,8 +39,10 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Network Sql REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network Sql REQUIRED)
 #find_package(spdlog PATHS ${CMAKE_BINARY_DIR} REQUIRED)
 #find_package(toxcore  REQUIRED)
-#find_package(libsodium PATHS ${CMAKE_BINARY_DIR} REQUIRED)
-include_directories(${CONAN_INCLUDE_DIRS})
+include_directories(${CMAKE_BINARY_DIR}/Findlibsodium.cmake)
+include_directories(${LIBSODIUM_INCLUDES})
+include_directories(C:/.conan/3bccfc/1/include)
+include(cmake/toxcore.cmake)
 
 set(SOURCE_FILES
         main.cpp
@@ -89,7 +92,9 @@ target_link_libraries(ToxLite PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Sql
-    ${CONAN_LIBS}
+    ${libsodium_LIBRARIES}
+    C:/.conan/3bccfc/1/lib/libsodium.lib
+    ${external_TOXCORE}
     )
 
 set_target_properties(ToxLite PROPERTIES
