@@ -11,6 +11,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
+
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
    file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake"
@@ -35,14 +38,16 @@ conan_cmake_install(PATH_OR_REFERENCE .
                     REMOTE conan-center
                     SETTINGS ${settings})
 
-include(cmake/toxcore.cmake)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Network Sql REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network Sql REQUIRED)
-#find_package(spdlog PATHS ${CMAKE_BINARY_DIR} REQUIRED)
-#find_package(toxcore  REQUIRED)
-include_directories(${CMAKE_BINARY_DIR}/Findlibsodium.cmake)
-include_directories(${LIBSODIUM_INCLUDES})
-include_directories(C:/.conan/c8a6ec/1/include)
+find_package(libsodium)
+find_package(spdlog)
+find_package(fmt)
+find_package(Opus)
+find_package(openssl)
+include_directories(${CMAKE_BINARY_DIR}/3rd/TOXCORE)
+
+include(cmake/toxcore.cmake)
 
 set(SOURCE_FILES
         main.cpp
@@ -76,24 +81,16 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
-else()
-    if(ANDROID)
-        add_library(ToxLite SHARED
-            ${PROJECT_SOURCES}
-        )
-    else()
-        add_executable(ToxLite
-            ${PROJECT_SOURCES}
-        )
-    endif()
 endif()
 
 target_link_libraries(ToxLite PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Sql
-    ${libsodium_LIBRARIES}
-    C:/.conan/c8a6ec/1/lib/libsodium.lib
+    libsodium::libsodium
+    spdlog::spdlog
+    fmt::fmt
+    Opus::Opus
     ${external_TOXCORE}
     )
 
