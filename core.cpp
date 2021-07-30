@@ -127,12 +127,14 @@ core::~core()
 
 void core::start()
 {
-
     while ( 1 ) {
         tox_iterate( tox, this );
+#ifdef WIN32
+        _sleep(tox_iteration_interval( tox ) * 1000);
+#elif UNIX
         usleep( tox_iteration_interval( tox ) * 1000 );
+#endif
     }
-
     tox_kill( tox );
 }
 

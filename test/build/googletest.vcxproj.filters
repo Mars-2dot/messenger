@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="G:\code\messenger\test\build\CMakeFiles\ed0ef4d56fd7d72401853a8f13c31179\googletest-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="G:\code\messenger\test\build\CMakeFiles\ed0ef4d56fd7d72401853a8f13c31179\googletest-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="G:\code\messenger\test\build\CMakeFiles\ed0ef4d56fd7d72401853a8f13c31179\googletest-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="G:\code\messenger\test\build\CMakeFiles\ed0ef4d56fd7d72401853a8f13c31179\googletest-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="G:\code\messenger\test\build\CMakeFiles\ed0ef4d56fd7d72401853a8f13c31179\googletest-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="G:\code\messenger\test\build\CMakeFiles\ed0ef4d56fd7d72401853a8f13c31179\googletest-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="G:\code\messenger\test\build\CMakeFiles\ed0ef4d56fd7d72401853a8f13c31179\googletest-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="G:\code\messenger\test\build\CMakeFiles\f9046cdcee5eed3530c41bc2a02a9304\googletest-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="G:\code\messenger\test\build\CMakeFiles\afd79c03553f38f966e6e1daaebba7c9\googletest.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="G:\code\messenger\test\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="G:\code\messenger\test\build\CMakeFiles\googletest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{C7915E9C-E637-3733-A228-9A1FE4AFCC8C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

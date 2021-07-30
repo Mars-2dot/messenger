@@ -1,0 +1,3 @@
+G:/code/messenger/test/build/CMakeFiles/googletest.dir
+G:/code/messenger/test/build/CMakeFiles/ALL_BUILD.dir
+G:/code/messenger/test/build/CMakeFiles/ZERO_CHECK.dir

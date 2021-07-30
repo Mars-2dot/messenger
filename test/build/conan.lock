@@ -1,0 +1,74 @@
+{
+ "graph_lock": {
+  "nodes": {
+   "0": {
+    "options": "fmt:header_only=False\nfmt:shared=False\nfmt:with_fmt_alias=False\nlibsodium:PIE=False\nlibsodium:shared=False\nlibsodium:use_soname=True\nlibvpx:avx=False\nlibvpx:avx2=False\nlibvpx:avx512=False\nlibvpx:mmx=True\nlibvpx:shared=False\nlibvpx:sse=True\nlibvpx:sse2=True\nlibvpx:sse3=True\nlibvpx:sse4_1=True\nlibvpx:ssse3=True\nopenssl:386=False\nopenssl:capieng_dialog=False\nopenssl:enable_capieng=False\nopenssl:no_aria=False\nopenssl:no_asm=False\nopenssl:no_async=False\nopenssl:no_bf=False\nopenssl:no_blake2=False\nopenssl:no_camellia=False\nopenssl:no_cast=False\nopenssl:no_chacha=False\nopenssl:no_cms=False\nopenssl:no_comp=False\nopenssl:no_ct=False\nopenssl:no_deprecated=False\nopenssl:no_des=False\nopenssl:no_dgram=False\nopenssl:no_dh=False\nopenssl:no_dsa=False\nopenssl:no_dso=False\nopenssl:no_ec=False\nopenssl:no_ecdh=False\nopenssl:no_ecdsa=False\nopenssl:no_engine=False\nopenssl:no_filenames=False\nopenssl:no_gost=False\nopenssl:no_hmac=False\nopenssl:no_idea=False\nopenssl:no_md4=False\nopenssl:no_md5=False\nopenssl:no_mdc2=False\nopenssl:no_ocsp=False\nopenssl:no_pinshared=False\nopenssl:no_rc2=False\nopenssl:no_rfc3779=False\nopenssl:no_rmd160=False\nopenssl:no_rsa=False\nopenssl:no_seed=False\nopenssl:no_sha=False\nopenssl:no_sm2=False\nopenssl:no_sm3=False\nopenssl:no_sm4=False\nopenssl:no_sock=False\nopenssl:no_srp=False\nopenssl:no_srtp=False\nopenssl:no_sse2=False\nopenssl:no_ssl=False\nopenssl:no_ssl3=False\nopenssl:no_threads=False\nopenssl:no_tls1=False\nopenssl:no_ts=False\nopenssl:no_whirlpool=False\nopenssl:openssldir=None\nopenssl:shared=False\nopus:fixed_point=False\nopus:shared=False\npthreads4w:exception_scheme=default\npthreads4w:shared=False\nspdlog:header_only=False\nspdlog:no_exceptions=False\nspdlog:shared=False\nspdlog:wchar_filenames=False\nspdlog:wchar_support=False",
+    "requires": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "7"
+    ],
+    "path": "conanfile.txt",
+    "context": "host"
+   },
+   "1": {
+    "ref": "libsodium/1.0.18",
+    "options": "PIE=False\nshared=False\nuse_soname=True",
+    "package_id": "f753390d5ff5a2ee3d573ab3bd6b1cf446256d93",
+    "prev": "0",
+    "context": "host"
+   },
+   "2": {
+    "ref": "pthreads4w/3.0.0",
+    "options": "exception_scheme=default\nshared=False",
+    "package_id": "671a50ef335d046615bfef14f33142d9ea0021e2",
+    "prev": "0",
+    "context": "host"
+   },
+   "3": {
+    "ref": "opus/1.3.1",
+    "options": "fixed_point=False\nshared=False",
+    "package_id": "3fb49604f9c2f729b85ba3115852006824e72cab",
+    "prev": "0",
+    "context": "host"
+   },
+   "4": {
+    "ref": "libvpx/1.9.0",
+    "options": "avx=False\navx2=False\navx512=False\nmmx=True\nshared=False\nsse=True\nsse2=True\nsse3=True\nsse4_1=True\nssse3=True",
+    "package_id": "1891f371c45ee62bcbf1bca10591761a8074bc39",
+    "prev": "0",
+    "context": "host"
+   },
+   "5": {
+    "ref": "spdlog/1.8.5",
+    "options": "header_only=False\nno_exceptions=False\nshared=False\nwchar_filenames=False\nwchar_support=False\nfmt:header_only=False\nfmt:shared=False\nfmt:with_fmt_alias=False",
+    "package_id": "5f068d3b65ebc5bb906d7ad2d998a4a2f8ad5db4",
+    "prev": "0",
+    "requires": [
+     "6"
+    ],
+    "context": "host"
+   },
+   "6": {
+    "ref": "fmt/7.1.3",
+    "options": "header_only=False\nshared=False\nwith_fmt_alias=False",
+    "package_id": "3fb49604f9c2f729b85ba3115852006824e72cab",
+    "prev": "0",
+    "context": "host"
+   },
+   "7": {
+    "ref": "openssl/1.1.1k",
+    "options": "386=False\ncapieng_dialog=False\nenable_capieng=False\nno_aria=False\nno_asm=False\nno_async=False\nno_bf=False\nno_blake2=False\nno_camellia=False\nno_cast=False\nno_chacha=False\nno_cms=False\nno_comp=False\nno_ct=False\nno_deprecated=False\nno_des=False\nno_dgram=False\nno_dh=False\nno_dsa=False\nno_dso=False\nno_ec=False\nno_ecdh=False\nno_ecdsa=False\nno_engine=False\nno_filenames=False\nno_gost=False\nno_hmac=False\nno_idea=False\nno_md4=False\nno_md5=False\nno_mdc2=False\nno_ocsp=False\nno_pinshared=False\nno_rc2=False\nno_rfc3779=False\nno_rmd160=False\nno_rsa=False\nno_seed=False\nno_sha=False\nno_sm2=False\nno_sm3=False\nno_sm4=False\nno_sock=False\nno_srp=False\nno_srtp=False\nno_sse2=False\nno_ssl=False\nno_ssl3=False\nno_threads=False\nno_tls1=False\nno_ts=False\nno_whirlpool=False\nopenssldir=None\nshared=False",
+    "package_id": "3fb49604f9c2f729b85ba3115852006824e72cab",
+    "prev": "0",
+    "context": "host"
+   }
+  },
+  "revisions_enabled": false
+ },
+ "version": "0.4",
+ "profile_host": "[settings]\narch=x86_64\narch_build=x86_64\nbuild_type=Release\ncompiler=Visual Studio\ncompiler.runtime=MD\ncompiler.version=16\nos=Windows\nos_build=Windows\n[options]\n[build_requires]\n[env]\n"
+}

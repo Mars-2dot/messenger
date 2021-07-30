@@ -5,6 +5,9 @@
 #include "qtincludes.h"
 #include "convertstring.h"
 #include "database.h"
+#ifdef  WIN32
+#include "windows.h"
+#endif
 
 class core;
 
