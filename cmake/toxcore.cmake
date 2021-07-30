@@ -24,7 +24,7 @@ ExternalProject_Add( ctoxcore
     TMP_DIR           ${TMP_PATH}
     STAMP_DIR         ${STAMP_PATH}
     LOG_DIR 	      ${LOG_PATH}
-    GIT_REPOSITORY    https://github.com/google/ctoxcore.git
+    GIT_REPOSITORY    https://github.com/TokTok/c-toxcore.gitt
 #    CMAKE_ARGS        "-Dgtest_force_shared_crt=ON"
     BUILD_COMMAND     ${CMAKE_COMMAND} --build ${ctoxcore_ROOT} --config Release
     UPDATE_COMMAND ""

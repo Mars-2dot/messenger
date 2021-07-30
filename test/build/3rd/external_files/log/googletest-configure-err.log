@@ -1,7 +1,0 @@
-SOVERSION: 2.12.0
-CMake Error at cmake/Dependencies.cmake:53 (message):
-  libsodium libraries not found
-Call Stack (most recent call first):
-  CMakeLists.txt:125 (include)
-
-

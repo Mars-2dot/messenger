@@ -1,3 +1,0 @@
-repository='https://github.com/TokTok/c-toxcore.git'
-module=''
-tag='origin'
